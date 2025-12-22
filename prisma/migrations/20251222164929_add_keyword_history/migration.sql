@@ -1,0 +1,8 @@
+-- CreateTable
+CREATE TABLE "KeywordHistory" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "keywordId" INTEGER NOT NULL,
+    "position" INTEGER NOT NULL,
+    "date" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT "KeywordHistory_keywordId_fkey" FOREIGN KEY ("keywordId") REFERENCES "Keyword" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);

@@ -1,0 +1,209 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Keyword {
+  id               Int      @id @default(autoincrement())
+  term             String
+  position         Int      @default(0)
+  previousPosition Int      @default(0)
+  volume           String?
+  difficulty       String?
+  url              String?
+  updatedAt        DateTime @updatedAt
+  createdAt        DateTime @default(now())
+
+  clientId         String?
+  client           Client?   @relation(fields: [clientId], references: [id])
+  history          KeywordHistory[]
+}
+
+model KeywordHistory {
+  id        Int      @id @default(autoincrement())
+  keywordId Int
+  keyword   Keyword  @relation(fields: [keywordId], references: [id], onDelete: Cascade)
+  position  Int
+  date      DateTime @default(now())
+}
+
+model Backlink {
+  id        Int      @id @default(autoincrement())
+  domain    String
+  dr        Int?     @default(0)
+  type      String?  @default("Nofollow")
+  cost      Float?   @default(0)
+  status    String   @default("Prospecting") // Prospecting, Negotiating, Content Sent, Published, Rejected
+  
+  // Prospecting Fields
+  dateSent        DateTime?
+  owner           String?
+  keyword         String?
+  volume          String?
+  intent          String?
+  h1              String?
+  title           String?
+  metaDescription String?
+  anchorText      String?
+  driveUrl        String?
+  postUrl         String?
+  targetUrl       String?
+  followUpDate    DateTime?
+
+  date      DateTime @default(now())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clientId  String?
+  client    Client?   @relation(fields: [clientId], references: [id])
+}
+
+model ContentTask {
+  id        Int      @id @default(autoincrement())
+  title     String
+  column    String
+  priority  String
+  dueDate   String?
+  assignee  String?
+  createdAt DateTime @default(now())
+  
+  clientId  String?
+  client    Client?   @relation(fields: [clientId], references: [id])
+}
+
+model Client {
+  id        String   @id @default(cuid())
+  name      String
+  url       String?
+  color     String?  @default("#000000")
+  
+  // CRM Fields
+  status           String   @default("Active") // Active, Inactive, Lead
+  monthlyValue     Float?   @default(0)
+  annualRevenue    Float?   @default(0)
+  contractDuration String?  // e.g. "12 meses"
+  startDate        DateTime?
+  notes            String?
+  
+  // Contact Info
+  cnpj             String?
+  phone            String?
+  email            String?
+  address          String?
+
+  // Affiliate / Project Type
+  type             String   @default("Client") // "Client" | "Affiliate"
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  keywords     Keyword[]
+  backlinks    Backlink[]
+  contentTasks ContentTask[]
+  contentItems ContentItem[]
+  roadmapTasks SeoRoadmapTask[]
+  technicalAudit TechnicalAudit?
+  affiliateLinks AffiliateLink[]
+  earnings       Earning[]
+}
+
+model ContentItem {
+  id              String   @id @default(cuid())
+  title           String
+  keyword         String?
+  status          String   @default("IDEA") // IDEA, BRIEFING, WRITING, REVIEW, SCHEDULED, PUBLISHED
+  
+  // Content Details
+  h1              String?
+  structure       String?  // JSON string for H2, H3, H4 structure
+  metaTitle       String?
+  metaDescription String?
+  
+  // Planning
+  deadline        DateTime?
+  publicationDate DateTime?
+  author          String?
+  
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model AffiliateLink {
+  id        String   @id @default(cuid())
+  label     String   // e.g. "Amazon - Câmera Sony"
+  url       String
+  commission Float?  // %
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model Earning {
+  id        String   @id @default(cuid())
+  source    String   // "Amazon", "AdSense"
+  amount    Float
+  date      DateTime
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+}
+
+model SeoRoadmapTask {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  taskKey   String
+  status    String   @default("PENDING") // PENDING, COMPLETED
+  completedAt DateTime?
+  
+  @@unique([clientId, taskKey])
+}
+
+model TechnicalAudit {
+  id        String   @id @default(cuid())
+  clientId  String   @unique
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  
+  // Storing the audit data as a JSON string
+  // Structure: { [key: string]: { status: "ok" | "issue" | "pending", notes: string } }
+  data      String   @default("{}") 
+  
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+}
+
+model MarketplaceItem {
+  id          String   @id @default(cuid())
+  domain      String
+  dr          Int
+  traffic     String?
+  price       Float
+  niche       String?
+  description String?
+  
+  // Status: Available, Sold (can be sold multiple times if it's a guest post site, but maybe we want to hide if unavailable)
+  status      String   @default("Available") // Available, Paused
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("USER") // ADMIN, USER
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
