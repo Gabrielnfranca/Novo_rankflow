@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -39,16 +39,16 @@ export function KeywordHistoryDialog({ keyword }: KeywordHistoryDialogProps) {
   const [newPosition, setNewPosition] = useState("")
   const [loading, setLoading] = useState(false)
 
+  const loadHistory = useCallback(async () => {
+    const data = await getKeywordHistory(keyword.id)
+    setHistory(data)
+  }, [keyword.id])
+
   useEffect(() => {
     if (open) {
       loadHistory()
     }
-  }, [open])
-
-  async function loadHistory() {
-    const data = await getKeywordHistory(keyword.id)
-    setHistory(data)
-  }
+  }, [open, loadHistory])
 
   async function handleUpdatePosition() {
     if (!newPosition) return

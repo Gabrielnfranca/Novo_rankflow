@@ -30,10 +30,9 @@ interface MarketplaceItem {
 
 interface MarketplaceViewProps {
   items: MarketplaceItem[]
-  clients: { id: string; name: string }[]
 }
 
-export function MarketplaceView({ items, clients }: MarketplaceViewProps) {
+export function MarketplaceView({ items }: MarketplaceViewProps) {
   const [view, setView] = useState<"grid" | "list">("list")
 
   if (items.length === 0) {

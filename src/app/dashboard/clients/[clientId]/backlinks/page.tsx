@@ -4,7 +4,7 @@ import { EditBacklinkDialog } from "@/components/edit-backlink-dialog"
 import { DeleteBacklinkDialog } from "@/components/delete-backlink-dialog"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import {
   Table,
@@ -15,7 +15,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { differenceInDays, format, isPast, isToday } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import { ExternalLink, Search, AlertCircle, CheckCircle2, Clock, Info } from "lucide-react"
 import {
   Tooltip,

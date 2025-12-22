@@ -20,6 +20,7 @@ export async function getTechnicalAudit(clientId: string) {
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function saveTechnicalAudit(clientId: string, data: any) {
   try {
     const dataString = JSON.stringify(data)

@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Save, Loader2 } from "lucide-react"
+import { Save, Loader2, HelpCircle } from "lucide-react"
 import { saveTechnicalAudit } from "@/app/actions/technical"
 import { toast } from "sonner"
 
@@ -144,10 +144,9 @@ export function TechnicalAuditBoard({ initialData, clientId }: { initialData: Re
     const result = await saveTechnicalAudit(clientId, data)
     setIsSaving(false)
     if (result.success) {
-      // toast.success("Auditoria salva com sucesso!")
-      alert("Salvo com sucesso!")
+      toast.success("Auditoria salva com sucesso!")
     } else {
-      alert("Erro ao salvar.")
+      toast.error("Erro ao salvar.")
     }
   }
 

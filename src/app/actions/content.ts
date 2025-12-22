@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { ContentItem } from "@prisma/client"
 
 export async function addContent(formData: FormData) {
   const title = formData.get("title") as string
