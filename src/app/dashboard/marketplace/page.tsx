@@ -1,13 +1,9 @@
 import { getMarketplaceItems } from "@/app/actions/marketplace"
-import { getSidebarClients } from "@/app/actions"
 import { AddMarketplaceItemDialog } from "@/components/add-marketplace-item-dialog"
 import { MarketplaceView } from "@/components/marketplace-view"
 
 export default async function MarketplacePage() {
-  const [items, clients] = await Promise.all([
-    getMarketplaceItems(),
-    getSidebarClients()
-  ])
+  const items = await getMarketplaceItems()
 
   return (
     <div className="space-y-6">
@@ -21,7 +17,7 @@ export default async function MarketplacePage() {
         <AddMarketplaceItemDialog />
       </div>
 
-      <MarketplaceView items={items} clients={clients} />
+      <MarketplaceView items={items} />
     </div>
   )
 }

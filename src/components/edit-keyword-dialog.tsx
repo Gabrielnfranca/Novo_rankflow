@@ -23,8 +23,8 @@ interface EditKeywordDialogProps {
     id: number
     term: string
     url: string | null
-    difficulty: string
-    volume: string
+    difficulty: string | null
+    volume: string | null
     clientId?: string | null
   }
 }
@@ -75,14 +75,14 @@ export function EditKeywordDialog({ keyword }: EditKeywordDialogProps) {
             <Label htmlFor="volume" className="text-right">
               Volume
             </Label>
-            <Input id="volume" name="volume" defaultValue={keyword.volume} className="col-span-3" />
+            <Input id="volume" name="volume" defaultValue={keyword.volume || ""} className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="difficulty" className="text-right">
               Dificuldade
             </Label>
             <div className="col-span-3">
-                <Select name="difficulty" defaultValue={keyword.difficulty}>
+                <Select name="difficulty" defaultValue={keyword.difficulty || undefined}>
                 <SelectTrigger>
                     <SelectValue placeholder="Selecione" />
                 </SelectTrigger>

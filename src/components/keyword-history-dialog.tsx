@@ -29,7 +29,8 @@ interface KeywordHistoryDialogProps {
 }
 
 interface HistoryItem {
-  date: string
+  id?: number
+  date: string | Date
   position: number
 }
 

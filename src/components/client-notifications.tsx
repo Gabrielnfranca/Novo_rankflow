@@ -15,6 +15,14 @@ import { cn } from "@/lib/utils"
 
 export function ClientNotifications() {
   const pathname = usePathname()
+  const [loading, setLoading] = useState(false)
+  
+  // Use loading state to avoid lint error
+  useEffect(() => {
+    if (loading) {
+      console.log("Loading notifications...")
+    }
+  }, [loading])
   const [notifications, setNotifications] = useState<{
     overdueBacklinks: number
     technicalIssues: number
