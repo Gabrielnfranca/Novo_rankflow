@@ -47,7 +47,7 @@ export function DeleteKeywordDialog({ keyword }: DeleteKeywordDialogProps) {
         <DialogHeader>
           <DialogTitle>Excluir Palavra-Chave</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja excluir a palavra-chave "{keyword.term}"? Esta ação não pode ser desfeita.
+            Tem certeza que deseja excluir a palavra-chave &quot;{keyword.term}&quot;? Esta ação não pode ser desfeita.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

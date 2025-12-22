@@ -15,7 +15,7 @@ import { Label } from "@/components/ui/label"
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { History, Plus } from "lucide-react"
+import { History } from "lucide-react"
 import { getKeywordHistory, updateKeywordPosition } from "@/app/actions"
 import { toast } from "sonner"
 
@@ -28,9 +28,14 @@ interface KeywordHistoryDialogProps {
   }
 }
 
+interface HistoryItem {
+  date: string
+  position: number
+}
+
 export function KeywordHistoryDialog({ keyword }: KeywordHistoryDialogProps) {
   const [open, setOpen] = useState(false)
-  const [history, setHistory] = useState<any[]>([])
+  const [history, setHistory] = useState<HistoryItem[]>([])
   const [newPosition, setNewPosition] = useState("")
   const [loading, setLoading] = useState(false)
 

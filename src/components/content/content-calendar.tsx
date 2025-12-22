@@ -6,8 +6,6 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInte
 import { ptBR } from "date-fns/locale"
 import { Button } from "@/components/ui/button"
 import { ChevronLeft, ChevronRight } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
 
 interface ContentCalendarProps {
   items: ContentItem[]
@@ -67,7 +65,7 @@ export function ContentCalendar({ items }: ContentCalendarProps) {
           </div>
         ))}
         
-        {days.map((day, dayIdx) => {
+        {days.map((day) => {
             const dayItems = getItemsForDay(day)
             const isCurrentMonth = isSameMonth(day, currentMonth)
 

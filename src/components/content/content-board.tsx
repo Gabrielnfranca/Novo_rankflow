@@ -1,14 +1,11 @@
 "use client"
 
 import { ContentItem } from "@prisma/client"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Calendar, User, AlertCircle } from "lucide-react"
-import { updateContentStatus } from "@/app/actions/content"
-import { toast } from "sonner"
-import { useRouter } from "next/navigation"
+import { Calendar, User } from "lucide-react"
 
 import { EditContentDialog } from "./edit-content-dialog"
 import { DeleteContentDialog } from "./delete-content-dialog"
@@ -27,9 +24,7 @@ const COLUMNS = [
   { id: "PUBLISHED", title: "Publicado", color: "bg-green-50/50 border-green-100" },
 ]
 
-export function ContentBoard({ items, clientId }: ContentBoardProps) {
-  const router = useRouter()
-
+export function ContentBoard({ items }: ContentBoardProps) {
   // Function to get deadline status color
   const getDeadlineStatus = (deadline: Date | null) => {
     if (!deadline) return "text-muted-foreground"

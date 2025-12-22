@@ -44,7 +44,7 @@ export function DeleteContentDialog({ item }: DeleteContentDialogProps) {
         <DialogHeader>
           <DialogTitle>Excluir Conteúdo</DialogTitle>
           <DialogDescription>
-            Tem certeza que deseja excluir "{item.title}"? Esta ação não pode ser desfeita.
+            Tem certeza que deseja excluir &quot;{item.title}&quot;? Esta ação não pode ser desfeita.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>
