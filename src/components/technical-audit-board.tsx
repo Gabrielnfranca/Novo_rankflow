@@ -1,26 +1,16 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { CheckCircle2, AlertCircle, XCircle, HelpCircle, Save, Loader2 } from "lucide-react"
+import { Save, Loader2 } from "lucide-react"
 import { saveTechnicalAudit } from "@/app/actions/technical"
 import { toast } from "sonner"
 
 type AuditStatus = "pending" | "pass" | "fail" | "warning"
-
-interface AuditItem {
-  id: string
-  category: string
-  label: string
-  description: string
-  status: AuditStatus
-  notes: string
-}
 
 const AUDIT_STRUCTURE = [
   {
@@ -135,7 +125,7 @@ const AUDIT_STRUCTURE = [
   }
 ]
 
-export function TechnicalAuditBoard({ initialData, clientId }: { initialData: any, clientId: string }) {
+export function TechnicalAuditBoard({ initialData, clientId }: { initialData: Record<string, { status: AuditStatus, notes: string }>, clientId: string }) {
   const [data, setData] = useState<Record<string, { status: AuditStatus, notes: string }>>(initialData || {})
   const [isSaving, setIsSaving] = useState(false)
 
