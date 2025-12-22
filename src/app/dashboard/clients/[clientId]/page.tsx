@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Globe, MapPin, AlertTriangle, CheckCircle2, Clock, FileWarning, ArrowRight, TrendingUp, Link as LinkIcon, FileText } from "lucide-react"
+import { Globe, MapPin, CheckCircle2, Clock, FileWarning, ArrowRight, TrendingUp, Link as LinkIcon, FileText } from "lucide-react"
 import Link from "next/link"
 
 export default async function ClientPage({ params }: { params: Promise<{ clientId: string }> }) {

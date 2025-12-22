@@ -23,7 +23,6 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Plus, Loader2 } from "lucide-react"
 import { addBacklink } from "@/app/actions"
-import { useToast } from "@/hooks/use-toast"
 
 export function AddBacklinkDialog({ clientId }: { clientId?: string }) {
   const [open, setOpen] = useState(false)

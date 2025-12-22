@@ -20,7 +20,6 @@ export function ClientNotifications() {
     technicalIssues: number
     total: number
   } | null>(null)
-  const [loading, setLoading] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
   // Extract clientId from path

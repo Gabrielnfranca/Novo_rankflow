@@ -21,7 +21,6 @@ import {
 import { buyMarketplaceItem } from "@/app/actions/marketplace"
 import { ShoppingCart } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner" // Assuming sonner is installed or we can use simple alert for now if not
 
 interface BuyDialogProps {
   item: {
