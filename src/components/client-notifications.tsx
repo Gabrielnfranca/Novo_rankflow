@@ -39,7 +39,6 @@ type NotificationState = {
 
 export function ClientNotifications() {
   const pathname = usePathname()
-  const [loading, setLoading] = useState(false)
   
   const [notifications, setNotifications] = useState<NotificationState | null>(null)
   const [isOpen, setIsOpen] = useState(false)
@@ -51,10 +50,8 @@ export function ClientNotifications() {
   const clientId = isClientContext ? clientMatch[1] : null
 
   const fetchNotifications = useCallback(async () => {
-    setLoading(true)
     const data = await getClientNotifications(clientId)
     setNotifications(data)
-    setLoading(false)
   }, [clientId])
 
   useEffect(() => {
