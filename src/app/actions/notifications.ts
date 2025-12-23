@@ -66,6 +66,19 @@ export async function getNotifications() {
   }
 }
 
+export async function deleteNotification(id: string) {
+    try {
+        await prisma.notification.delete({
+            where: { id }
+        })
+        revalidatePath("/admin")
+        revalidatePath("/dashboard")
+        return { success: true }
+    } catch (error) {
+        return { error: "Erro ao deletar notificação" }
+    }
+}
+
 export async function getClientNotifications(clientId?: string | null) {
   try {
     const session = await getSession()

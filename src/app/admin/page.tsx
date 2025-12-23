@@ -4,7 +4,10 @@ import { getNotifications } from "@/app/actions/notifications"
 import { getTickets } from "@/app/actions/support"
 import { AddUserDialog } from "@/components/admin/add-user-dialog"
 import { AddMarketplaceItemDialog } from "@/components/admin/add-marketplace-item-dialog"
+import { EditMarketplaceItemDialog } from "@/components/admin/edit-marketplace-item-dialog"
+import { DeleteMarketplaceItemDialog } from "@/components/admin/delete-marketplace-item-dialog"
 import { AddNotificationDialog } from "@/components/admin/add-notification-dialog"
+import { DeleteNotificationDialog } from "@/components/admin/delete-notification-dialog"
 import { ResetPasswordDialog } from "@/components/admin/reset-password-dialog"
 import { DeleteUserDialog } from "@/components/admin/delete-user-dialog"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
@@ -169,7 +172,10 @@ export default async function AdminPage() {
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right">
-                           {/* Actions */}
+                           <div className="flex items-center justify-end gap-2">
+                              <EditMarketplaceItemDialog item={item} />
+                              <DeleteMarketplaceItemDialog itemId={item.id} domain={item.domain} />
+                           </div>
                         </TableCell>
                       </TableRow>
                     ))}
@@ -216,7 +222,7 @@ export default async function AdminPage() {
                           {format(new Date(ticket.updatedAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                         </TableCell>
                         <TableCell className="text-right">
-                           {/* Actions */}
+                           {/* Actions for tickets will be implemented later if needed */}
                         </TableCell>
                       </TableRow>
                     ))}
@@ -246,7 +252,7 @@ export default async function AdminPage() {
                       <TableHead>Título</TableHead>
                       <TableHead>Tipo</TableHead>
                       <TableHead>Data</TableHead>
-                      <TableHead className="text-right">Status</TableHead>
+                      <TableHead className="text-right">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -260,7 +266,9 @@ export default async function AdminPage() {
                           {format(new Date(notification.createdAt), "dd/MM/yyyy HH:mm", { locale: ptBR })}
                         </TableCell>
                         <TableCell className="text-right">
-                           <Badge variant="secondary">Enviado</Badge>
+                           <div className="flex items-center justify-end gap-2">
+                              <DeleteNotificationDialog notificationId={notification.id} title={notification.title} />
+                           </div>
                         </TableCell>
                       </TableRow>
                     ))}

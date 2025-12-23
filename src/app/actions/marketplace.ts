@@ -43,6 +43,37 @@ export async function createMarketplaceItem(formData: FormData) {
   }
 }
 
+export async function updateMarketplaceItem(id: string, formData: FormData) {
+    const domain = formData.get("domain") as string
+    const dr = parseInt(formData.get("dr") as string)
+    const price = parseFloat(formData.get("price") as string)
+    const niche = formData.get("niche") as string
+    const description = formData.get("description") as string
+    const traffic = formData.get("traffic") as string
+    const status = formData.get("status") as string
+
+    try {
+        await prisma.marketplaceItem.update({
+            where: { id },
+            data: {
+                domain,
+                dr,
+                price,
+                niche,
+                description,
+                traffic,
+                status
+            }
+        })
+        revalidatePath("/admin")
+        revalidatePath("/dashboard/marketplace")
+        return { success: true }
+    } catch (error) {
+        console.error("Erro ao atualizar item:", error)
+        return { error: "Erro ao atualizar item" }
+    }
+}
+
 export async function deleteMarketplaceItem(id: string) {
     try {
         await prisma.marketplaceItem.delete({
