@@ -2,6 +2,7 @@
 
 import Link from "next/link"
 import { usePathname, useRouter } from "next/navigation"
+import { logoutAction } from "@/app/actions/auth"
 import { 
   LayoutDashboard, 
   LineChart, 
@@ -234,17 +235,26 @@ export function AppSidebar({ isCollapsed = false, onCollapse, clients = [] }: { 
              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" title="Sistema Operacional" />
           </div>
         )}
-        <Button 
-          variant="ghost" 
-          className={cn(
-            "mt-4 w-full text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-            isCollapsed ? "justify-center px-0" : "justify-start gap-2"
-          )}
-          title={isCollapsed ? "Sair da Conta" : undefined}
-        >
-          <LogOut className="h-4 w-4" />
-          {!isCollapsed && "Sair da Conta"}
-        </Button>
+import { logoutAction } from "@/app/actions/auth"
+
+// ... existing imports ...
+
+// ... inside AppSidebar component ...
+
+        <form action={logoutAction}>
+          <Button 
+            variant="ghost" 
+            className={cn(
+              "mt-4 w-full text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              isCollapsed ? "justify-center px-0" : "justify-start gap-2"
+            )}
+            title={isCollapsed ? "Sair da Conta" : undefined}
+            type="submit"
+          >
+            <LogOut className="h-4 w-4" />
+            {!isCollapsed && "Sair da Conta"}
+          </Button>
+        </form>
       </div>
     </div>
   )

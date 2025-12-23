@@ -10,9 +10,10 @@ import { cn } from "@/lib/utils"
 interface DashboardShellProps {
   children: React.ReactNode
   clients?: { id: string; name: string; logo?: string }[]
+  user?: { name: string; email: string; role: string }
 }
 
-export function DashboardShell({ children, clients = [] }: DashboardShellProps) {
+export function DashboardShell({ children, clients = [], user }: DashboardShellProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
@@ -43,11 +44,13 @@ export function DashboardShell({ children, clients = [] }: DashboardShellProps) 
             <ClientNotifications />
             <ModeToggle />
             <div className="flex flex-col items-end">
-                <span className="text-sm font-medium">Especialista SEO</span>
-                <span className="text-xs text-muted-foreground">Plano Pro</span>
+                <span className="text-sm font-medium">{user?.name || "Usuário"}</span>
+                <span className="text-xs text-muted-foreground">{user?.role || "Membro"}</span>
             </div>
             <Avatar className="h-9 w-9 border-2 border-primary/20">
-              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarImage src={`https://ui-avatars.com/api/?name=${user?.name || "User"}&background=random`} />
+              <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
+            </Avatar>
               <AvatarFallback>CN</AvatarFallback>
             </Avatar>
           </div>
