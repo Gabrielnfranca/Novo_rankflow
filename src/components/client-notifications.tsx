@@ -178,7 +178,7 @@ export function ClientNotifications() {
           <DialogHeader>
             <DialogTitle>{selectedNotification?.title}</DialogTitle>
             <DialogDescription>
-              {new Date(selectedNotification?.createdAt).toLocaleDateString()}
+              {selectedNotification?.createdAt ? new Date(selectedNotification.createdAt).toLocaleDateString() : ''}
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
