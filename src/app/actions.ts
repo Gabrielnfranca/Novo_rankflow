@@ -1,5 +1,6 @@
 "use server"
 
+import { Prisma } from "@prisma/client"
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
 import { getSession } from "@/lib/auth"
@@ -95,7 +96,9 @@ export async function addClient(formData: FormData) {
         phone,
         email,
         address,
-        userId: session.user.id,
+        user: {
+          connect: { id: session.user.id }
+        }
       },
     })
 
@@ -103,30 +106,22 @@ export async function addClient(formData: FormData) {
     return { success: true }
   } catch (error) {
     console.error("Erro ao adicionar cliente:", error instanceof Error ? error.message : String(error))
-    returnsession = await getSession()
-    const user = session?.user
-    
-    // Se for ADMIN vê tudo, se for USER vê só os seus
-    // Se não tiver usuário (não logado), não vê nada (ou vê tudo se for a lógica antiga, mas melhor proteger)
-    const where = user?.role === 'ADMIN' ? {} : { userId: user?.id }
-
-    const clients = await prisma.client.findMany({
-      where,
+    return { error: "Erro ao salvar cliente" }
   }
 }
 
 export async function getClients() {
   try {
-    const clients = await prisma.client.findMany({
-      orderBy: { createdAt: "desc" },
-      include: {
-        _csession = await getSession()
+    const session = await getSession()
     const user = session?.user
     
-    const where = user?.role === 'ADMIN' ? {} : { userId: user?.id }
+    const where: Prisma.ClientWhereInput = user?.role === 'ADMIN' ? {} : { userId: user?.id }
 
     const clients = await prisma.client.findMany({
       where,
+      orderBy: { createdAt: "desc" },
+      include: {
+        _count: {
           select: { keywords: true, backlinks: true }
         }
       }
@@ -140,7 +135,13 @@ export async function getClients() {
 
 export async function getSidebarClients() {
   try {
+    const session = await getSession()
+    const user = session?.user
+    
+    const where: Prisma.ClientWhereInput = user?.role === 'ADMIN' ? {} : { userId: user?.id }
+
     const clients = await prisma.client.findMany({
+      where,
       orderBy: { createdAt: "desc" },
       select: {
         id: true,
