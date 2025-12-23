@@ -2,7 +2,6 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { z } from "zod"
 
 export async function getTickets() {
   try {
@@ -42,7 +41,7 @@ export async function createTicket(userId: string, subject: string, message: str
                 messages: {
                     create: {
                         content: message,
-                        sender: 'USER'
+                        senderId: userId
                     }
                 }
             }
@@ -62,7 +61,7 @@ export async function replyTicket(ticketId: string, message: string, isAdmin: bo
             data: {
                 ticketId,
                 content: message,
-                sender: isAdmin ? 'ADMIN' : 'USER'
+                senderId: isAdmin ? 'ADMIN' : 'USER'
             }
         })
 

@@ -29,14 +29,7 @@ export function AddMarketplaceItemDialog() {
 
     const formData = new FormData(event.currentTarget)
     
-    await createMarketplaceItem({
-      domain: formData.get("domain") as string,
-      dr: Number(formData.get("dr")),
-      traffic: formData.get("traffic") as string,
-      price: Number(formData.get("price")),
-      niche: formData.get("niche") as string,
-      description: formData.get("description") as string,
-    })
+    await createMarketplaceItem(formData)
 
     setLoading(false)
     setOpen(false)

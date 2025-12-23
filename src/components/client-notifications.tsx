@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { usePathname } from "next/navigation"
 import { Bell, AlertTriangle, Clock, CheckCircle2, Info } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -20,36 +20,42 @@ import { getClientNotifications, markNotificationAsRead } from "@/app/actions/no
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
+type Notification = {
+  id: string
+  title: string
+  message: string
+  createdAt: string | Date
+  read: boolean
+  type: string
+  global: boolean
+}
+
+type NotificationState = {
+  overdueBacklinks: number
+  technicalIssues: number
+  globalNotifications: Notification[]
+  total: number
+}
+
 export function ClientNotifications() {
   const pathname = usePathname()
   const [loading, setLoading] = useState(false)
   
-  // Use loading state to avoid lint error
-  useEffect(() => {
-    if (loading) {
-      console.log("Loading notifications...")
-    }
-  }, [loading])
-  const [notifications, setNotifications] = useState<{
-    overdueBacklinks: number
-    technicalIssues: number
-    globalNotifications: any[]
-    total: number
-  } | null>(null)
+  const [notifications, setNotifications] = useState<NotificationState | null>(null)
   const [isOpen, setIsOpen] = useState(false)
-  const [selectedNotification, setSelectedNotification] = useState<any>(null)
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null)
 
   // Extract clientId from path
   const clientMatch = pathname.match(/^\/dashboard\/clients\/([^/]+)/)
   const isClientContext = clientMatch && clientMatch[1] !== 'new'
   const clientId = isClientContext ? clientMatch[1] : null
 
-  async function fetchNotifications() {
+  const fetchNotifications = useCallback(async () => {
     setLoading(true)
     const data = await getClientNotifications(clientId)
     setNotifications(data)
     setLoading(false)
-  }
+  }, [clientId])
 
   useEffect(() => {
     fetchNotifications()
@@ -57,9 +63,9 @@ export function ClientNotifications() {
     // Optional: Poll every minute
     const interval = setInterval(fetchNotifications, 60000)
     return () => clearInterval(interval)
-  }, [clientId, pathname]) // Re-fetch when path changes (e.g. switching clients)
+  }, [fetchNotifications]) // Re-fetch when path changes (e.g. switching clients)
 
-  const handleNotificationClick = async (notification: any) => {
+  const handleNotificationClick = async (notification: Notification) => {
     setSelectedNotification(notification)
     setIsOpen(false)
     await markNotificationAsRead(notification.id)

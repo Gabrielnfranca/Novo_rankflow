@@ -82,7 +82,7 @@ export async function deleteMarketplaceItem(id: string) {
         revalidatePath("/admin")
         revalidatePath("/dashboard/marketplace")
         return { success: true }
-    } catch (error) {
+    } catch {
         return { error: "Erro ao deletar item" }
     }
 }

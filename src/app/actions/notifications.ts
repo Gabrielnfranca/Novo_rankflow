@@ -49,7 +49,7 @@ export async function markNotificationAsRead(notificationId: string) {
         })
         revalidatePath('/dashboard')
         return { success: true }
-    } catch (error) {
+    } catch {
         // Ignore unique constraint error (already read)
         return { success: true }
     }
@@ -61,7 +61,7 @@ export async function getNotifications() {
       orderBy: { createdAt: 'desc' },
       take: 50
     })
-  } catch (error) {
+  } catch {
     return []
   }
 }
@@ -74,7 +74,7 @@ export async function deleteNotification(id: string) {
         revalidatePath("/admin")
         revalidatePath("/dashboard")
         return { success: true }
-    } catch (error) {
+    } catch {
         return { error: "Erro ao deletar notificação" }
     }
 }
