@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils"
 interface DashboardShellProps {
   children: React.ReactNode
   clients?: { id: string; name: string; logo?: string }[]
-  user?: { name: string; email: string; role: string }
+  user?: { name: string; email: string; role?: string }
 }
 
 export function DashboardShell({ children, clients = [], user }: DashboardShellProps) {

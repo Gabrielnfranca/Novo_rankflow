@@ -9,7 +9,7 @@ export interface SessionUser {
   id: string
   email: string
   name: string
-  role?: string
+  role: string
 }
 
 export interface SessionPayload extends JWTPayload {
