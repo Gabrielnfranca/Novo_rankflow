@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { getSession } from "@/lib/auth"
 
 export async function addKeyword(formData: FormData) {
   const term = formData.get("term") as string
@@ -74,6 +75,11 @@ export async function addClient(formData: FormData) {
     return { error: "Nome do cliente é obrigatório" }
   }
 
+  const session = await getSession()
+  if (!session?.user?.id) {
+    return { error: "Usuário não autenticado" }
+  }
+
   try {
     await prisma.client.create({
       data: {
@@ -89,6 +95,7 @@ export async function addClient(formData: FormData) {
         phone,
         email,
         address,
+        userId: session.user.id,
       },
     })
 
@@ -96,7 +103,15 @@ export async function addClient(formData: FormData) {
     return { success: true }
   } catch (error) {
     console.error("Erro ao adicionar cliente:", error instanceof Error ? error.message : String(error))
-    return { error: "Erro ao salvar cliente" }
+    returnsession = await getSession()
+    const user = session?.user
+    
+    // Se for ADMIN vê tudo, se for USER vê só os seus
+    // Se não tiver usuário (não logado), não vê nada (ou vê tudo se for a lógica antiga, mas melhor proteger)
+    const where = user?.role === 'ADMIN' ? {} : { userId: user?.id }
+
+    const clients = await prisma.client.findMany({
+      where,
   }
 }
 
@@ -105,7 +120,13 @@ export async function getClients() {
     const clients = await prisma.client.findMany({
       orderBy: { createdAt: "desc" },
       include: {
-        _count: {
+        _csession = await getSession()
+    const user = session?.user
+    
+    const where = user?.role === 'ADMIN' ? {} : { userId: user?.id }
+
+    const clients = await prisma.client.findMany({
+      where,
           select: { keywords: true, backlinks: true }
         }
       }

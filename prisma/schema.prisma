@@ -99,6 +99,10 @@ model Client {
   email            String?
   address          String?
 
+  // Owner
+  userId           String?
+  user             User?    @relation(fields: [userId], references: [id])
+
   // Affiliate / Project Type
   type             String   @default("Client") // "Client" | "Affiliate"
   
@@ -212,6 +216,7 @@ model User {
   tickets       Ticket[]
   notifications Notification[]
   readNotifications NotificationRead[]
+  clients       Client[]
 }
 
 // --- New Admin Modules ---
