@@ -54,7 +54,7 @@ function LoginForm() {
               </p>
             )}
           </CardContent>
-          <CardFooter>
+          <CardFooter className="pt-4">
             <Button className="w-full" type="submit" disabled={isPending}>
               {isPending ? (
                 <>
