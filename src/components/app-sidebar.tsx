@@ -235,12 +235,6 @@ export function AppSidebar({ isCollapsed = false, onCollapse, clients = [] }: { 
              <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" title="Sistema Operacional" />
           </div>
         )}
-import { logoutAction } from "@/app/actions/auth"
-
-// ... existing imports ...
-
-// ... inside AppSidebar component ...
-
         <form action={logoutAction}>
           <Button 
             variant="ghost" 

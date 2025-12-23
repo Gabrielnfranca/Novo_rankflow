@@ -34,10 +34,10 @@ export default async function KeywordsPage({ params }: { params: Promise<{ clien
             <TableHeader>
               <TableRow>
                 <TableHead>Termo</TableHead>
-                <TableHead>Posição Atual</TableHead>
-                <TableHead>Variação</TableHead>
-                <TableHead>Volume</TableHead>
-                <TableHead>Dificuldade</TableHead>
+                <TableHead className="text-center">Posição Atual</TableHead>
+                <TableHead className="text-center">Variação</TableHead>
+                <TableHead className="text-center">Volume</TableHead>
+                <TableHead className="text-center">Dificuldade</TableHead>
                 <TableHead className="text-right">Ações</TableHead>
               </TableRow>
             </TableHeader>
@@ -59,21 +59,21 @@ export default async function KeywordsPage({ params }: { params: Promise<{ clien
                 return (
                   <TableRow key={keyword.id}>
                     <TableCell className="font-medium">{keyword.term}</TableCell>
-                    <TableCell>
-                        <div className="flex items-center gap-2">
+                    <TableCell className="text-center">
+                        <div className="flex items-center justify-center gap-2">
                             <span className="text-lg font-bold">{keyword.position === 0 ? "-" : keyword.position}</span>
                         </div>
                     </TableCell>
-                    <TableCell>
-                        <div className={`flex items-center gap-1 ${trendColor}`}>
+                    <TableCell className="text-center">
+                        <div className={`flex items-center justify-center gap-1 ${trendColor}`}>
                             {trendIcon}
                             {keyword.previousPosition !== 0 && Math.abs(keyword.previousPosition - keyword.position) > 0 && (
                                 <span>{Math.abs(keyword.previousPosition - keyword.position)}</span>
                             )}
                         </div>
                     </TableCell>
-                    <TableCell>{keyword.volume}</TableCell>
-                    <TableCell>
+                    <TableCell className="text-center">{keyword.volume}</TableCell>
+                    <TableCell className="text-center">
                         <Badge variant="outline">{keyword.difficulty}</Badge>
                     </TableCell>
                     <TableCell className="text-right">

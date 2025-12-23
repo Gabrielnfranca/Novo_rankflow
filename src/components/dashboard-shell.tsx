@@ -51,8 +51,6 @@ export function DashboardShell({ children, clients = [], user }: DashboardShellP
               <AvatarImage src={`https://ui-avatars.com/api/?name=${user?.name || "User"}&background=random`} />
               <AvatarFallback>{user?.name?.charAt(0) || "U"}</AvatarFallback>
             </Avatar>
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
           </div>
         </header>
 
