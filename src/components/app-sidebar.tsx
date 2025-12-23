@@ -70,7 +70,7 @@ const mainNavItems = [
   },
 ]
 
-export function AppSidebar({ isCollapsed = false, onCollapse, clients = [], user }: { isCollapsed?: boolean; onCollapse?: () => void; clients?: { id: string; name: string; logo?: string }[]; user?: { role: string } }) {
+export function AppSidebar({ isCollapsed = false, onCollapse, clients = [], user }: { isCollapsed?: boolean; onCollapse?: () => void; clients?: { id: string; name: string; logo?: string }[]; user?: { name: string; email: string; role?: string } }) {
   const pathname = usePathname()
   const router = useRouter()
 
