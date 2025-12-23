@@ -482,7 +482,15 @@ export async function getKeywordHistory(keywordId: number) {
     
     if (!keyword) return []
     
-    if (user?.role !== 'ADMIN' && keyword.client.userId !== user?.id) return []
+    // Check if keyword has a client and if user has access to it
+    if (user?.role !== 'ADMIN') {
+        // If keyword has no client, it might be an orphan or global. 
+        // If the logic requires strict ownership, we should hide it.
+        // If keyword.client is null, keyword.client.userId will throw.
+        if (!keyword.client || keyword.client.userId !== user?.id) {
+            return []
+        }
+    }
 
     const history = await prisma.keywordHistory.findMany({
       where: { keywordId },
