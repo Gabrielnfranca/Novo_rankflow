@@ -2,6 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { getSession } from "@/lib/auth"
 
 export async function addContent(formData: FormData) {
   const title = formData.get("title") as string
@@ -124,6 +125,14 @@ export async function deleteContent(id: string, clientId: string) {
 
 export async function getContentItems(clientId: string) {
   try {
+    const session = await getSession()
+    const user = session?.user
+    
+    const client = await prisma.client.findUnique({ where: { id: clientId } })
+    if (!client) return []
+    
+    if (user?.role !== 'ADMIN' && client.userId !== user?.id) return []
+
     const items = await prisma.contentItem.findMany({
       where: { clientId },
       orderBy: { createdAt: "desc" },

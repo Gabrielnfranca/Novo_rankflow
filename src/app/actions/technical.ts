@@ -2,9 +2,18 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { getSession } from "@/lib/auth"
 
 export async function getTechnicalAudit(clientId: string) {
   try {
+    const session = await getSession()
+    const user = session?.user
+    
+    const client = await prisma.client.findUnique({ where: { id: clientId } })
+    if (!client) return {}
+    
+    if (user?.role !== 'ADMIN' && client.userId !== user?.id) return {}
+
     const audit = await prisma.technicalAudit.findUnique({
       where: { clientId },
     })

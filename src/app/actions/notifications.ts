@@ -104,25 +104,29 @@ export async function getClientNotifications(clientId?: string | null) {
     let technicalIssues = 0
 
     if (clientId) {
-        const [backlinksCount, technicalAudit] = await Promise.all([
-            prisma.backlink.count({
-                where: {
-                clientId,
-                followUpDate: { lt: new Date() },
-                status: { notIn: ['Published', 'Rejected'] }
-                }
-            }),
-            prisma.technicalAudit.findUnique({
-                where: { clientId }
-            })
-        ])
+        const client = await prisma.client.findUnique({ where: { id: clientId } })
         
-        overdueBacklinks = backlinksCount
+        if (client && (session?.user?.role === 'ADMIN' || client.userId === userId)) {
+            const [backlinksCount, technicalAudit] = await Promise.all([
+                prisma.backlink.count({
+                    where: {
+                    clientId,
+                    followUpDate: { lt: new Date() },
+                    status: { notIn: ['Published', 'Rejected'] }
+                    }
+                }),
+                prisma.technicalAudit.findUnique({
+                    where: { clientId }
+                })
+            ])
+            
+            overdueBacklinks = backlinksCount
 
-        if (technicalAudit?.data) {
-            const data = JSON.parse(technicalAudit.data)
-            const items = Object.values(data) as { status: string }[]
-            technicalIssues = items.filter((item) => item.status === 'fail' || item.status === 'warning').length
+            if (technicalAudit?.data) {
+                const data = JSON.parse(technicalAudit.data)
+                const items = Object.values(data) as { status: string }[]
+                technicalIssues = items.filter((item) => item.status === 'fail' || item.status === 'warning').length
+            }
         }
     }
 

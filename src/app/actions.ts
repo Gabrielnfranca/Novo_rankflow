@@ -43,7 +43,22 @@ export async function addKeyword(formData: FormData) {
 export async function getKeywords(clientId?: string) {
   try {
     console.log("Iniciando busca de keywords...");
-    const where = clientId ? { clientId } : {}
+    const session = await getSession()
+    const user = session?.user
+
+    if (user?.role !== 'ADMIN' && !user?.id) return []
+
+    // If specific client requested, check ownership
+    if (clientId) {
+        const client = await prisma.client.findUnique({ where: { id: clientId } })
+        if (!client) return []
+        if (user?.role !== 'ADMIN' && client.userId !== user?.id) return [] 
+    }
+
+    const where: Prisma.KeywordWhereInput = clientId 
+        ? { clientId } 
+        : (user?.role === 'ADMIN' ? {} : { client: { userId: user?.id } })
+
     const keywords = await prisma.keyword.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -158,9 +173,19 @@ export async function getSidebarClients() {
 
 export async function getClient(id: string) {
   try {
+    const session = await getSession()
+    const user = session?.user
+
     const client = await prisma.client.findUnique({
       where: { id },
     })
+
+    if (!client) return null
+    
+    if (user?.role !== 'ADMIN' && client.userId !== user?.id) {
+        return null
+    }
+
     return client
   } catch (error) {
     console.error("Erro ao buscar cliente:", error instanceof Error ? error.message : String(error))
@@ -170,10 +195,30 @@ export async function getClient(id: string) {
 
 export async function getDashboardStats() {
   try {
+    const session = await getSession()
+    const user = session?.user
+    
+    if (user?.role !== 'ADMIN' && !user?.id) {
+         return {
+            totalClients: 0,
+            totalKeywords: 0,
+            top3: 0,
+            top10: 0,
+            top100: 0,
+            distribution: [],
+            winners: [],
+            losers: []
+         }
+    }
+
+    const clientWhere: Prisma.ClientWhereInput = user?.role === 'ADMIN' ? {} : { userId: user?.id }
+    const keywordWhere: Prisma.KeywordWhereInput = user?.role === 'ADMIN' ? {} : { client: { userId: user?.id } }
+
     const [totalClients, totalKeywords, keywords] = await Promise.all([
-      prisma.client.count(),
-      prisma.keyword.count(),
+      prisma.client.count({ where: clientWhere }),
+      prisma.keyword.count({ where: keywordWhere }),
       prisma.keyword.findMany({
+        where: keywordWhere,
         include: { client: true }
       })
     ])
@@ -362,7 +407,22 @@ export async function deleteBacklink(id: number, clientId?: string) {
 
 export async function getBacklinks(clientId?: string) {
   try {
-    const where = clientId ? { clientId } : {}
+    const session = await getSession()
+    const user = session?.user
+
+    if (user?.role !== 'ADMIN' && !user?.id) return []
+
+    // If specific client requested, check ownership
+    if (clientId) {
+        const client = await prisma.client.findUnique({ where: { id: clientId } })
+        if (!client) return []
+        if (user?.role !== 'ADMIN' && client.userId !== user?.id) return [] 
+    }
+
+    const where: Prisma.BacklinkWhereInput = clientId 
+        ? { clientId } 
+        : (user?.role === 'ADMIN' ? {} : { client: { userId: user?.id } })
+
     const backlinks = await prisma.backlink.findMany({
       where,
       orderBy: { createdAt: "desc" },
@@ -412,6 +472,18 @@ export async function updateKeywordPosition(keywordId: number, newPosition: numb
 
 export async function getKeywordHistory(keywordId: number) {
   try {
+    const session = await getSession()
+    const user = session?.user
+
+    const keyword = await prisma.keyword.findUnique({
+        where: { id: keywordId },
+        include: { client: true }
+    })
+    
+    if (!keyword) return []
+    
+    if (user?.role !== 'ADMIN' && keyword.client.userId !== user?.id) return []
+
     const history = await prisma.keywordHistory.findMany({
       where: { keywordId },
       orderBy: { date: "asc" },
