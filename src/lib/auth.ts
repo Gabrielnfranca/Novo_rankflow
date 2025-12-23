@@ -5,7 +5,19 @@ import { NextRequest, NextResponse } from "next/server"
 const secretKey = "secret-key-change-me-in-production"
 const key = new TextEncoder().encode(secretKey)
 
-export async function encrypt(payload: JWTPayload) {
+export interface SessionUser {
+  id: string
+  email: string
+  name: string
+  role?: string
+}
+
+export interface SessionPayload extends JWTPayload {
+  user: SessionUser
+  expires: Date
+}
+
+export async function encrypt(payload: SessionPayload) {
   return await new SignJWT(payload)
     .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
@@ -13,17 +25,22 @@ export async function encrypt(payload: JWTPayload) {
     .sign(key)
 }
 
-export async function decrypt(input: string): Promise<JWTPayload> {
+export async function decrypt(input: string): Promise<SessionPayload> {
   const { payload } = await jwtVerify(input, key, {
     algorithms: ["HS256"],
   })
-  return payload
+  return payload as unknown as SessionPayload
 }
 
 export async function login(formData: FormData) {
   // Verify credentials -> this will be done in the server action
   // Create the session
-  const user = { email: formData.get("email"), name: "John Doe" } // Replace with real user
+  const user: SessionUser = { 
+    id: "1", // Mock ID
+    email: formData.get("email") as string, 
+    name: "John Doe",
+    role: "USER"
+  } 
   
   // Create the session
   const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
