@@ -9,6 +9,7 @@ import { redirect } from "next/navigation"
 export async function loginAction(prevState: any, formData: FormData) {
   const email = formData.get("email") as string
   const password = formData.get("password") as string
+  let userRole = "USER"
 
   if (!email || !password) {
     return { error: "Email e senha são obrigatórios" }
@@ -22,6 +23,8 @@ export async function loginAction(prevState: any, formData: FormData) {
     if (!user) {
       return { error: "Credenciais inválidas" }
     }
+    
+    userRole = user.role
 
     const passwordMatch = await compare(password, user.password)
 
@@ -50,7 +53,12 @@ export async function loginAction(prevState: any, formData: FormData) {
     return { error: "Erro ao realizar login" }
   }
 
-  redirect("/dashboard")
+  // Redirection must happen outside try/catch because it throws an error
+  if (userRole === "ADMIN") {
+    redirect("/admin")
+  } else {
+    redirect("/dashboard")
+  }
 }
 
 export async function logoutAction() {

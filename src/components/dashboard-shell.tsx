@@ -29,6 +29,7 @@ export function DashboardShell({ children, clients = [], user }: DashboardShellP
           isCollapsed={isCollapsed} 
           onCollapse={() => setIsCollapsed(!isCollapsed)} 
           clients={clients}
+          user={user}
         />
       </aside>
 

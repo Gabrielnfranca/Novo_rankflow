@@ -18,6 +18,7 @@ import {
   FileCode,
   ShoppingBag,
   FileText,
+  ShieldCheck,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -69,7 +70,7 @@ const mainNavItems = [
   },
 ]
 
-export function AppSidebar({ isCollapsed = false, onCollapse, clients = [] }: { isCollapsed?: boolean; onCollapse?: () => void; clients?: { id: string; name: string; logo?: string }[] }) {
+export function AppSidebar({ isCollapsed = false, onCollapse, clients = [], user }: { isCollapsed?: boolean; onCollapse?: () => void; clients?: { id: string; name: string; logo?: string }[]; user?: { role: string } }) {
   const pathname = usePathname()
   const router = useRouter()
 
@@ -217,6 +218,29 @@ export function AppSidebar({ isCollapsed = false, onCollapse, clients = [] }: { 
         {isClientContext && !isCollapsed && (
            <div className="mt-6 pt-6 border-t border-sidebar-border">
            </div>
+        )}
+
+        {user?.role === 'ADMIN' && !isClientContext && (
+          <div className="mt-6 pt-6 border-t border-sidebar-border/50">
+             {!isCollapsed && (
+                <div className="mb-2 px-2 text-xs font-semibold uppercase tracking-wider text-sidebar-foreground/40 animate-in fade-in duration-300">
+                    Administração
+                </div>
+             )}
+             <Link
+                href="/admin"
+                className={cn(
+                  "group flex items-center gap-3 rounded-xl py-3 text-sm font-medium transition-all duration-200",
+                  isCollapsed 
+                    ? "justify-center px-0" 
+                    : "px-3 text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:pl-4"
+                )}
+                title={isCollapsed ? "Painel Admin" : undefined}
+              >
+                <ShieldCheck className="h-5 w-5 text-sidebar-foreground/40 group-hover:text-sidebar-accent-foreground" />
+                {!isCollapsed && <span>Painel Admin</span>}
+              </Link>
+          </div>
         )}
 
 

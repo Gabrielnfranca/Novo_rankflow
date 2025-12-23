@@ -1,7 +1,8 @@
 import "@/app/globals.css"
 import { Toaster } from "@/components/ui/sonner"
-import Link from "next/link"
-import { ShieldCheck, ArrowLeft } from "lucide-react"
+import { ShieldCheck, LogOut } from "lucide-react"
+import { logoutAction } from "@/app/actions/auth"
+import { Button } from "@/components/ui/button"
 
 export default function AdminLayout({
   children,
@@ -20,10 +21,12 @@ export default function AdminLayout({
                     <p className="text-xs text-muted-foreground">Gestão de Acesso e Usuários</p>
                 </div>
             </div>
-            <Link href="/dashboard" className="text-sm text-muted-foreground hover:text-primary flex items-center gap-2 transition-colors">
-                <ArrowLeft className="h-4 w-4" />
-                Voltar ao Dashboard
-            </Link>
+            <form action={logoutAction}>
+                <Button variant="ghost" className="text-sm text-muted-foreground hover:text-destructive flex items-center gap-2 transition-colors">
+                    <LogOut className="h-4 w-4" />
+                    Sair
+                </Button>
+            </form>
         </header>
         <main className="flex-1 p-8 max-w-7xl mx-auto w-full">
             {children}

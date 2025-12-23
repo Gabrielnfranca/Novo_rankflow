@@ -31,7 +31,11 @@ export async function middleware(request: NextRequest) {
   // Vamos proteger especificamente /dashboard e /admin
   if (path.startsWith('/dashboard') || path.startsWith('/admin')) {
     if (!currentUser) {
-      return NextResponse.redirect(new URL('/login', request.url))
+      const loginUrl = new URL('/login', request.url)
+      if (path.startsWith('/admin')) {
+        loginUrl.searchParams.set('admin', 'true')
+      }
+      return NextResponse.redirect(loginUrl)
     }
   }
 
