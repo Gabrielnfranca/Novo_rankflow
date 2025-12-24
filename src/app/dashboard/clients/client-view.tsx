@@ -273,7 +273,7 @@ export function ClientView({ clients }: ClientViewProps) {
                                 >
                                     Excluir
                                 </DropdownMenuItem>
-                            </DropdownMenuContent>>
+                            </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
                   </TableCell>
