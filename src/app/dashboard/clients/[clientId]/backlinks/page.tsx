@@ -15,7 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { differenceInDays, format, isPast, isToday } from "date-fns"
-import { ExternalLink, Search, AlertCircle, CheckCircle2, Clock, Info } from "lucide-react"
+import { ExternalLink, Search, AlertCircle, CheckCircle2, Clock, Info, FileText } from "lucide-react"
 import {
   Tooltip,
   TooltipContent,
@@ -256,13 +256,17 @@ export default async function BacklinksPage({ params }: { params: Promise<{ clie
                         <TableCell className="align-middle text-center">
                           <div className="flex gap-2 justify-center">
                               {backlink.driveUrl && (
-                                  <a href={backlink.driveUrl} target="_blank" rel="noreferrer" title="Ver no Drive" className="text-muted-foreground hover:text-primary">
-                                      <ExternalLink className="h-4 w-4" />
+                                  <a href={backlink.driveUrl} target="_blank" rel="noreferrer" title="Ver Conteúdo (Drive)">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                                          <FileText className="h-4 w-4" />
+                                      </Button>
                                   </a>
                               )}
                               {backlink.postUrl && (
-                                  <a href={backlink.postUrl} target="_blank" rel="noreferrer" title="Ver Post Publicado" className="text-green-600 hover:text-green-700">
-                                      <CheckCircle2 className="h-4 w-4" />
+                                  <a href={backlink.postUrl} target="_blank" rel="noreferrer" title="Ver Post Publicado">
+                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50">
+                                          <ExternalLink className="h-4 w-4" />
+                                      </Button>
                                   </a>
                               )}
                           </div>
