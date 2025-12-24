@@ -150,6 +150,7 @@ export default async function BacklinksPage({ params }: { params: Promise<{ clie
                   <TableHead className="w-[200px] text-center">Title</TableHead>
                   <TableHead className="w-[250px] text-center">Meta Description</TableHead>
                   <TableHead className="w-[120px] text-center">Intenção</TableHead>
+                  <TableHead className="w-[100px] text-center">Custo</TableHead>
                   <TableHead className="w-[150px] text-center">
                     <div className="flex items-center justify-center gap-1">
                       Cobrar em
@@ -173,7 +174,7 @@ export default async function BacklinksPage({ params }: { params: Promise<{ clie
               <TableBody>
                 {backlinks.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={12} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={13} className="h-24 text-center text-muted-foreground">
                       Nenhum backlink cadastrado. Inicie uma prospecção.
                     </TableCell>
                   </TableRow>
@@ -246,6 +247,13 @@ export default async function BacklinksPage({ params }: { params: Promise<{ clie
                             <div className="whitespace-normal break-words w-[120px] mx-auto">
                                 {backlink.intent || "-"}
                             </div>
+                        </TableCell>
+                        <TableCell className="align-middle text-center">
+                            {backlink.cost ? (
+                                <span className="font-medium text-green-600">
+                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(backlink.cost)}
+                                </span>
+                            ) : "-"}
                         </TableCell>
                         <TableCell className="align-middle text-center">
                           {followUpDate ? (
