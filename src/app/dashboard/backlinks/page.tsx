@@ -2,7 +2,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Badge } from "@/components/ui/badge"
-import { Plus, DollarSign, Link as LinkIcon, TrendingUp, ExternalLink } from "lucide-react"
+import { Plus, DollarSign, Link as LinkIcon, TrendingUp, ExternalLink, FileText } from "lucide-react"
 import { getBacklinks } from "@/app/actions"
 
 export default async function BacklinksPage() {
@@ -121,9 +121,22 @@ export default async function BacklinksPage() {
                       </TableCell>
                       <TableCell className="text-muted-foreground text-sm whitespace-nowrap">{new Date(link.createdAt).toLocaleDateString('pt-BR')}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                          <ExternalLink className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-end gap-1">
+                          {link.driveUrl && (
+                            <a href={link.driveUrl} target="_blank" rel="noopener noreferrer" title="Ver Conteúdo (Drive)">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
+                                <FileText className="h-4 w-4" />
+                              </Button>
+                            </a>
+                          )}
+                          {link.postUrl && (
+                            <a href={link.postUrl} target="_blank" rel="noopener noreferrer" title="Ver Post Publicado">
+                              <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50">
+                                <ExternalLink className="h-4 w-4" />
+                              </Button>
+                            </a>
+                          )}
+                        </div>
                       </TableCell>
                     </TableRow>
                   ))
