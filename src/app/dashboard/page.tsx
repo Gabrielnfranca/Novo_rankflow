@@ -3,6 +3,8 @@ import { DashboardStats } from "@/components/dashboard-stats"
 import { RankDistributionChart } from "@/components/rank-distribution-chart"
 import { RecentActivity } from "@/components/recent-activity"
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   const stats = await getDashboardStats()
 
