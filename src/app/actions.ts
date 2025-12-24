@@ -125,6 +125,29 @@ export async function addClient(formData: FormData) {
   }
 }
 
+export async function deleteClient(id: string) {
+  try {
+    const session = await getSession()
+    const user = session?.user
+
+    if (!user?.id) return { error: "Não autorizado" }
+
+    const client = await prisma.client.findUnique({ where: { id } })
+    if (!client) return { error: "Cliente não encontrado" }
+
+    if (user.role !== 'ADMIN' && client.userId !== user.id) {
+        return { error: "Sem permissão" }
+    }
+
+    await prisma.client.delete({ where: { id } })
+    revalidatePath("/dashboard")
+    return { success: true }
+  } catch (error) {
+    console.error("Erro ao excluir cliente:", error)
+    return { error: "Erro ao excluir cliente" }
+  }
+}
+
 export async function getClients() {
   try {
     const session = await getSession()

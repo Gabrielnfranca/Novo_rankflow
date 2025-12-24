@@ -15,6 +15,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { AddClientDialog } from "@/components/add-client-dialog"
+import { DeleteClientDialog } from "@/components/delete-client-dialog"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -58,6 +59,7 @@ interface ClientViewProps {
 export function ClientView({ clients }: ClientViewProps) {
   const [viewMode, setViewMode] = React.useState<"grid" | "list">("list")
   const [searchQuery, setSearchQuery] = React.useState("")
+  const [clientToDelete, setClientToDelete] = React.useState<Client | null>(null)
 
   const filteredClients = clients.filter(client => 
     client.name.toLowerCase().includes(searchQuery.toLowerCase())
@@ -65,6 +67,12 @@ export function ClientView({ clients }: ClientViewProps) {
 
   return (
     <div className="space-y-4">
+      <DeleteClientDialog 
+        open={!!clientToDelete} 
+        onOpenChange={(open) => !open && setClientToDelete(null)}
+        clientId={clientToDelete?.id || ""}
+        clientName={clientToDelete?.name || ""}
+      />
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <div className="relative w-full sm:w-64">
@@ -124,7 +132,12 @@ export function ClientView({ clients }: ClientViewProps) {
                     <DropdownMenuItem>Editar Cliente</DropdownMenuItem>
                     <DropdownMenuItem>Configurações</DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600">Excluir</DropdownMenuItem>
+                    <DropdownMenuItem 
+                        className="text-red-600 cursor-pointer"
+                        onSelect={() => setClientToDelete(client)}
+                    >
+                        Excluir
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </CardHeader>
@@ -254,8 +267,13 @@ export function ClientView({ clients }: ClientViewProps) {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
                                 <DropdownMenuItem>Editar</DropdownMenuItem>
-                                <DropdownMenuItem className="text-red-600">Excluir</DropdownMenuItem>
-                            </DropdownMenuContent>
+                                <DropdownMenuItem 
+                                    className="text-red-600 cursor-pointer"
+                                    onSelect={() => setClientToDelete(client)}
+                                >
+                                    Excluir
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>>
                         </DropdownMenu>
                     </div>
                   </TableCell>
