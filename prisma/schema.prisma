@@ -101,7 +101,7 @@ model Client {
 
   // Owner
   userId           String?
-  user             User?    @relation(fields: [userId], references: [id])
+  user             User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Affiliate / Project Type
   type             String   @default("Client") // "Client" | "Affiliate"
@@ -228,7 +228,7 @@ model Ticket {
   priority  String   @default("MEDIUM") // LOW, MEDIUM, HIGH
   
   userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   messages  TicketMessage[]
   
@@ -257,7 +257,7 @@ model Notification {
   global    Boolean  @default(false)
   
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   
   read      Boolean  @default(false)
   
