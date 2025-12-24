@@ -191,3 +191,57 @@ export async function getContentItems(clientId: string) {
     return []
   }
 }
+
+export async function getAllContentTasks() {
+  const session = await verifySession()
+  if (!session) return []
+
+  try {
+    const tasks = await prisma.contentTask.findMany({
+      where: {
+        client: {
+          userId: session.user.id
+        }
+      },
+      include: {
+        client: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    })
+    return tasks
+  } catch (error) {
+    console.error("Erro ao buscar tarefas:", error)
+    return []
+  }
+}
+
+export async function getAllContentItems() {
+  const session = await verifySession()
+  if (!session) return []
+
+  try {
+    const items = await prisma.contentItem.findMany({
+      where: {
+        client: {
+          userId: session.user.id
+        }
+      },
+      include: {
+        client: {
+          select: {
+            name: true
+          }
+        }
+      },
+      orderBy: { createdAt: "desc" }
+    })
+    return items
+  } catch (error) {
+    console.error("Erro ao buscar todos os conteúdos:", error)
+    return []
+  }
+}

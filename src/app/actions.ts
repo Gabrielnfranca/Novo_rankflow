@@ -453,6 +453,13 @@ export async function getBacklinks(clientId?: string) {
     const backlinks = await prisma.backlink.findMany({
       where,
       orderBy: { createdAt: "desc" },
+      include: {
+        client: {
+          select: {
+            name: true
+          }
+        }
+      }
     })
     return backlinks
   } catch (error) {
