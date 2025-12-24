@@ -2,14 +2,22 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { verifySession } from "@/lib/auth"
 
 export async function getMarketplaceItems() {
+  // Marketplace items are visible to all authenticated users
+  const session = await verifySession()
+  if (!session) return []
+  
   return await prisma.marketplaceItem.findMany({
     orderBy: { createdAt: 'desc' }
   })
 }
 
 export async function createMarketplaceItem(formData: FormData) {
+  const session = await verifySession()
+  if (session?.user.role !== "ADMIN") return { error: "Unauthorized" }
+
   const domain = formData.get("domain") as string
   const dr = parseInt(formData.get("dr") as string)
   const price = parseFloat(formData.get("price") as string)
@@ -44,6 +52,9 @@ export async function createMarketplaceItem(formData: FormData) {
 }
 
 export async function updateMarketplaceItem(id: string, formData: FormData) {
+    const session = await verifySession()
+    if (session?.user.role !== "ADMIN") return { error: "Unauthorized" }
+
     const domain = formData.get("domain") as string
     const dr = parseInt(formData.get("dr") as string)
     const price = parseFloat(formData.get("price") as string)
@@ -75,6 +86,9 @@ export async function updateMarketplaceItem(id: string, formData: FormData) {
 }
 
 export async function deleteMarketplaceItem(id: string) {
+    const session = await verifySession()
+    if (session?.user.role !== "ADMIN") return { error: "Unauthorized" }
+
     try {
         await prisma.marketplaceItem.delete({
             where: { id }
@@ -88,6 +102,15 @@ export async function deleteMarketplaceItem(id: string) {
 }
 
 export async function buyMarketplaceItem(itemId: string, clientId: string) {
+  const session = await verifySession()
+  if (!session) throw new Error("Unauthorized")
+
+  // Verify client ownership
+  const client = await prisma.client.findFirst({
+    where: { id: clientId, userId: session.user.id }
+  })
+  if (!client) throw new Error("Client not found or access denied")
+
   const item = await prisma.marketplaceItem.findUnique({
     where: { id: itemId }
   })

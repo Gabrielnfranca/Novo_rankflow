@@ -2,8 +2,22 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { verifySession } from "@/lib/auth"
 
 export async function toggleRoadmapTask(clientId: string, taskKey: string, currentStatus: boolean) {
+  const session = await verifySession()
+  if (!session) return { success: false, error: "Unauthorized" }
+
+  // Verify ownership
+  const client = await prisma.client.findFirst({
+    where: {
+      id: clientId,
+      userId: session.user.id
+    }
+  })
+
+  if (!client) return { success: false, error: "Client not found or access denied" }
+
   try {
     const newStatus = currentStatus ? "PENDING" : "COMPLETED"
     

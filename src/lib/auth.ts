@@ -66,6 +66,14 @@ export async function getSession() {
   }
 }
 
+export async function verifySession() {
+  const session = await getSession()
+  if (!session?.user?.id) {
+    return null
+  }
+  return session
+}
+
 export async function updateSession(request: NextRequest) {
   const session = request.cookies.get("session")?.value
   if (!session) return

@@ -2,7 +2,7 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/auth"
+import { getSession, verifySession } from "@/lib/auth"
 
 export async function getTechnicalAudit(clientId: string) {
   try {
@@ -31,6 +31,15 @@ export async function getTechnicalAudit(clientId: string) {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function saveTechnicalAudit(clientId: string, data: any) {
+  const session = await verifySession()
+  if (!session) return { error: "Unauthorized" }
+
+  // Verify ownership
+  const client = await prisma.client.findFirst({
+    where: { id: clientId, userId: session.user.id }
+  })
+  if (!client) return { error: "Client not found or access denied" }
+
   try {
     const dataString = JSON.stringify(data)
     

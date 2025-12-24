@@ -2,9 +2,12 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/auth"
+import { getSession, verifySession } from "@/lib/auth"
 
 export async function createNotification(formData: FormData) {
+  const session = await verifySession()
+  if (session?.user.role !== 'ADMIN') return { error: "Unauthorized" }
+
   const title = formData.get("title") as string
   const message = formData.get("message") as string
   const type = formData.get("type") as string || "INFO"
@@ -35,7 +38,7 @@ export async function createNotification(formData: FormData) {
 }
 
 export async function markNotificationAsRead(notificationId: string) {
-    const session = await getSession()
+    const session = await verifySession()
     const userId = session?.user?.id
     
     if (!userId) return { success: false }
@@ -56,6 +59,9 @@ export async function markNotificationAsRead(notificationId: string) {
 }
 
 export async function getNotifications() {
+  const session = await verifySession()
+  if (session?.user.role !== 'ADMIN') return []
+
   try {
     return await prisma.notification.findMany({
       orderBy: { createdAt: 'desc' },
@@ -67,6 +73,9 @@ export async function getNotifications() {
 }
 
 export async function deleteNotification(id: string) {
+    const session = await verifySession()
+    if (session?.user.role !== 'ADMIN') return { error: "Unauthorized" }
+
     try {
         await prisma.notification.delete({
             where: { id }

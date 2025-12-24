@@ -2,10 +2,17 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
+import { verifySession } from "@/lib/auth"
 
 export async function getTickets() {
+  const session = await verifySession()
+  if (!session) return []
+
   try {
+    const where = session.user.role === 'ADMIN' ? {} : { userId: session.user.id }
+
     const tickets = await prisma.ticket.findMany({
+      where,
       include: {
         user: {
           select: {
@@ -31,17 +38,20 @@ export async function getTickets() {
   }
 }
 
-export async function createTicket(userId: string, subject: string, message: string) {
+export async function createTicket(subject: string, message: string) {
+    const session = await verifySession()
+    if (!session) return { success: false, error: "Unauthorized" }
+
     try {
         const ticket = await prisma.ticket.create({
             data: {
-                userId,
+                userId: session.user.id,
                 subject,
                 status: 'OPEN',
                 messages: {
                     create: {
                         content: message,
-                        senderId: userId
+                        senderId: session.user.id
                     }
                 }
             }
@@ -55,20 +65,32 @@ export async function createTicket(userId: string, subject: string, message: str
     }
 }
 
-export async function replyTicket(ticketId: string, message: string, isAdmin: boolean = false) {
+export async function replyTicket(ticketId: string, message: string) {
+    const session = await verifySession()
+    if (!session) return { success: false, error: "Unauthorized" }
+
     try {
+        const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } })
+        if (!ticket) return { success: false, error: "Ticket not found" }
+
+        if (session.user.role !== 'ADMIN' && ticket.userId !== session.user.id) {
+            return { success: false, error: "Unauthorized" }
+        }
+
+        const senderId = session.user.role === 'ADMIN' ? 'ADMIN' : session.user.id
+
         await prisma.ticketMessage.create({
             data: {
                 ticketId,
                 content: message,
-                senderId: isAdmin ? 'ADMIN' : 'USER'
+                senderId
             }
         })
 
         await prisma.ticket.update({
             where: { id: ticketId },
             data: {
-                status: isAdmin ? 'ANSWERED' : 'OPEN',
+                status: session.user.role === 'ADMIN' ? 'ANSWERED' : 'OPEN',
                 updatedAt: new Date()
             }
         })
@@ -83,7 +105,17 @@ export async function replyTicket(ticketId: string, message: string, isAdmin: bo
 }
 
 export async function closeTicket(ticketId: string) {
+    const session = await verifySession()
+    if (!session) return { success: false, error: "Unauthorized" }
+
     try {
+        const ticket = await prisma.ticket.findUnique({ where: { id: ticketId } })
+        if (!ticket) return { success: false, error: "Ticket not found" }
+
+        if (session.user.role !== 'ADMIN' && ticket.userId !== session.user.id) {
+            return { success: false, error: "Unauthorized" }
+        }
+
         await prisma.ticket.update({
             where: { id: ticketId },
             data: { status: 'CLOSED' }

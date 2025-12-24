@@ -2,9 +2,12 @@
 
 import { prisma } from "@/lib/prisma"
 import { revalidatePath } from "next/cache"
-import { getSession } from "@/lib/auth"
+import { getSession, verifySession } from "@/lib/auth"
 
 export async function addContent(formData: FormData) {
+  const session = await verifySession()
+  if (!session) return { error: "Unauthorized" }
+
   const title = formData.get("title") as string
   const keyword = formData.get("keyword") as string
   const status = formData.get("status") as string || "IDEA"
@@ -23,6 +26,12 @@ export async function addContent(formData: FormData) {
   if (!title || !clientId) {
     return { error: "Título e Cliente são obrigatórios" }
   }
+
+  // Verify ownership
+  const client = await prisma.client.findFirst({
+    where: { id: clientId, userId: session.user.id }
+  })
+  if (!client) return { error: "Client not found or access denied" }
 
   try {
     await prisma.contentItem.create({
@@ -49,6 +58,9 @@ export async function addContent(formData: FormData) {
 }
 
 export async function updateContent(formData: FormData) {
+  const session = await verifySession()
+  if (!session) return { error: "Unauthorized" }
+
   const id = formData.get("id") as string
   const title = formData.get("title") as string
   const keyword = formData.get("keyword") as string
@@ -67,6 +79,16 @@ export async function updateContent(formData: FormData) {
 
   if (!id || !title) {
     return { error: "ID e Título são obrigatórios" }
+  }
+
+  // Verify ownership
+  const item = await prisma.contentItem.findUnique({
+    where: { id },
+    include: { client: true }
+  })
+
+  if (!item || item.client.userId !== session.user.id) {
+    return { error: "Content not found or access denied" }
   }
 
   try {
@@ -96,6 +118,19 @@ export async function updateContent(formData: FormData) {
 }
 
 export async function updateContentStatus(id: string, status: string, clientId: string) {
+    const session = await verifySession()
+    if (!session) return { error: "Unauthorized" }
+
+    // Verify ownership
+    const item = await prisma.contentItem.findUnique({
+        where: { id },
+        include: { client: true }
+    })
+
+    if (!item || item.client.userId !== session.user.id) {
+        return { error: "Content not found or access denied" }
+    }
+
     try {
         await prisma.contentItem.update({
             where: { id },
@@ -110,6 +145,19 @@ export async function updateContentStatus(id: string, status: string, clientId: 
 }
 
 export async function deleteContent(id: string, clientId: string) {
+  const session = await verifySession()
+  if (!session) return { error: "Unauthorized" }
+
+  // Verify ownership
+  const item = await prisma.contentItem.findUnique({
+      where: { id },
+      include: { client: true }
+  })
+
+  if (!item || item.client.userId !== session.user.id) {
+      return { error: "Content not found or access denied" }
+  }
+
   try {
     await prisma.contentItem.delete({
       where: { id },
