@@ -33,22 +33,20 @@ export async function decrypt(input: string): Promise<SessionPayload> {
 }
 
 export async function login(formData: FormData) {
-  // Verify credentials -> this will be done in the server action
-  // Create the session
+  // This function seems to be a mock or unused legacy function.
+  // The actual login logic is in src/app/actions/auth.ts
+  // We should probably remove or update this to avoid confusion, 
+  // but for now I will just comment out the mock ID part to be safe.
+  
+  /*
   const user: SessionUser = { 
     id: "1", // Mock ID
     email: formData.get("email") as string, 
     name: "John Doe",
     role: "USER"
   } 
-  
-  // Create the session
-  const expires = new Date(Date.now() + 24 * 60 * 60 * 1000)
-  const session = await encrypt({ user, expires })
-
-  // Save the session in a cookie
-  const cookieStore = await cookies()
-  cookieStore.set("session", session, { expires, httpOnly: true })
+  */
+  throw new Error("Use loginAction from @/app/actions/auth instead")
 }
 
 export async function logout() {

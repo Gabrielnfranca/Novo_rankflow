@@ -130,6 +130,8 @@ export async function getClients() {
     const session = await getSession()
     const user = session?.user
     
+    if (user?.role !== 'ADMIN' && !user?.id) return []
+
     const where: Prisma.ClientWhereInput = user?.role === 'ADMIN' ? {} : { userId: user?.id }
 
     const clients = await prisma.client.findMany({
@@ -153,6 +155,8 @@ export async function getSidebarClients() {
     const session = await getSession()
     const user = session?.user
     
+    if (user?.role !== 'ADMIN' && !user?.id) return []
+
     const where: Prisma.ClientWhereInput = user?.role === 'ADMIN' ? {} : { userId: user?.id }
 
     const clients = await prisma.client.findMany({
