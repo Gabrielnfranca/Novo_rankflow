@@ -2,8 +2,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { prisma } from "@/lib/prisma"
+import { GoogleSettings } from "@/components/google-integration/google-settings"
 
-export default function SettingsPage() {
+export default async function SettingsPage({ params }: { params: Promise<{ clientId: string }> }) {
+  const { clientId } = await params;
+
+  const client = await prisma.client.findUnique({
+    where: { id: clientId },
+    select: {
+      id: true,
+      name: true,
+      url: true,
+      googleRefreshToken: true,
+      gscUrl: true,
+      ga4PropertyId: true
+    }
+  });
+
+  if (!client) {
+    return <div>Cliente não encontrado</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div>
@@ -21,38 +41,22 @@ export default function SettingsPage() {
         <CardContent className="space-y-4">
           <div className="grid gap-2">
             <Label htmlFor="name">Nome do Cliente</Label>
-            <Input id="name" placeholder="Nome da empresa" />
+            <Input id="name" defaultValue={client.name} placeholder="Nome da empresa" />
           </div>
           <div className="grid gap-2">
             <Label htmlFor="url">URL do Site</Label>
-            <Input id="url" placeholder="https://exemplo.com.br" />
+            <Input id="url" defaultValue={client.url || ''} placeholder="https://exemplo.com.br" />
           </div>
           <Button>Salvar Alterações</Button>
         </CardContent>
       </Card>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Integrações</CardTitle>
-          <CardDescription>Conecte ferramentas externas.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <p className="font-medium">Google Search Console</p>
-              <p className="text-sm text-muted-foreground">Importe dados de performance orgânica.</p>
-            </div>
-            <Button variant="outline">Conectar</Button>
-          </div>
-          <div className="flex items-center justify-between p-4 border rounded-lg">
-            <div className="space-y-1">
-              <p className="font-medium">Google Analytics 4</p>
-              <p className="text-sm text-muted-foreground">Acompanhe tráfego e conversões.</p>
-            </div>
-            <Button variant="outline">Conectar</Button>
-          </div>
-        </CardContent>
-      </Card>
+      <GoogleSettings 
+        clientId={client.id}
+        isConnected={!!client.googleRefreshToken}
+        savedGscUrl={client.gscUrl}
+        savedGa4PropertyId={client.ga4PropertyId}
+      />
     </div>
   )
 }

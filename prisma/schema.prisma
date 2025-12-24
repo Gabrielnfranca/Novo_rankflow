@@ -99,6 +99,13 @@ model Client {
   email            String?
   address          String?
 
+  // Google Integration
+  googleRefreshToken String?
+  googleAccessToken  String?
+  googleTokenExpiry  DateTime?
+  gscUrl             String? // Selected Search Console Property
+  ga4PropertyId      String? // Selected GA4 Property ID
+
   // Owner
   userId           String
   user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)

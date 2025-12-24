@@ -114,6 +114,11 @@ export function AppSidebar({ isCollapsed = false, onCollapse, clients = [], user
       icon: FileText,
     },
     {
+      title: "Relatórios",
+      href: `/dashboard/clients/${currentClientId}/reports`,
+      icon: LineChart,
+    },
+    {
       title: "Configurações",
       href: `/dashboard/clients/${currentClientId}/settings`,
       icon: Settings,
