@@ -13,7 +13,7 @@ interface RankDistributionChartProps {
 
 export function RankDistributionChart({ data }: RankDistributionChartProps) {
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-1 md:col-span-1 lg:col-span-7">
       <CardHeader>
         <CardTitle>Distribuição de Rankings</CardTitle>
       </CardHeader>

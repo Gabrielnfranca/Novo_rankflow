@@ -28,7 +28,7 @@ export default async function BacklinksPage() {
         </Button>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 md:grid-cols-3">
         <Card className="border-none shadow-lg shadow-gray-100/50">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium text-muted-foreground">Investimento Total</CardTitle>
@@ -70,65 +70,67 @@ export default async function BacklinksPage() {
       </div>
 
       <div className="rounded-xl border bg-card shadow-sm overflow-hidden">
-        <Table>
-          <TableHeader className="bg-muted/30">
-            <TableRow>
-              <TableHead className="w-[300px]">Domínio</TableHead>
-              <TableHead>DR (Authority)</TableHead>
-              <TableHead>Tipo</TableHead>
-              <TableHead>Custo</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Data</TableHead>
-              <TableHead className="text-right">Ações</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {backlinks.length === 0 ? (
-                <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                        Nenhum backlink encontrado.
-                    </TableCell>
-                </TableRow>
-            ) : (
-                backlinks.map((link) => (
-                  <TableRow key={link.id} className="group hover:bg-muted/50 transition-colors">
-                    <TableCell className="font-medium text-base">
-                        <div>{link.domain}</div>
-                        {link.client?.name && (
-                            <div className="text-xs text-muted-foreground">{link.client.name}</div>
-                        )}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="secondary" className="bg-slate-100 text-slate-700 font-bold">
-                        {link.dr || 0}
-                      </Badge>
-                    </TableCell>
-                    <TableCell>{link.type || "-"}</TableCell>
-                    <TableCell className="font-medium">
-                      {(link.cost || 0) > 0 ? 
-                        new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(link.cost || 0) 
-                        : <span className="text-green-600">Grátis</span>}
-                    </TableCell>
-                    <TableCell>
-                      <Badge className={
-                        link.status === "Paid" || link.status === "Published" ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200" :
-                        link.status === "Pending" || link.status === "Negotiating" ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-yellow-200" :
-                        "bg-blue-100 text-blue-700 hover:bg-blue-100 border-blue-200"
-                      }>
-                        {link.status}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-muted-foreground text-sm">{new Date(link.createdAt).toLocaleDateString('pt-BR')}</TableCell>
-                    <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    </TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow>
+                <TableHead className="w-[300px]">Domínio</TableHead>
+                <TableHead>DR (Authority)</TableHead>
+                <TableHead>Tipo</TableHead>
+                <TableHead>Custo</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Data</TableHead>
+                <TableHead className="text-right">Ações</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {backlinks.length === 0 ? (
+                  <TableRow>
+                      <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                          Nenhum backlink encontrado.
+                      </TableCell>
                   </TableRow>
-                ))
-            )}
-          </TableBody>
-        </Table>
+              ) : (
+                  backlinks.map((link) => (
+                    <TableRow key={link.id} className="group hover:bg-muted/50 transition-colors">
+                      <TableCell className="font-medium text-base min-w-[200px]">
+                          <div>{link.domain}</div>
+                          {link.client?.name && (
+                              <div className="text-xs text-muted-foreground">{link.client.name}</div>
+                          )}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="secondary" className="bg-slate-100 text-slate-700 font-bold">
+                          {link.dr || 0}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="whitespace-nowrap">{link.type || "-"}</TableCell>
+                      <TableCell className="font-medium whitespace-nowrap">
+                        {(link.cost || 0) > 0 ? 
+                          new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(link.cost || 0) 
+                          : <span className="text-green-600">Grátis</span>}
+                      </TableCell>
+                      <TableCell>
+                        <Badge className={
+                          link.status === "Paid" || link.status === "Published" ? "bg-green-100 text-green-700 hover:bg-green-100 border-green-200" :
+                          link.status === "Pending" || link.status === "Negotiating" ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-100 border-yellow-200" :
+                          "bg-blue-100 text-blue-700 hover:bg-blue-100 border-blue-200"
+                        }>
+                          {link.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-muted-foreground text-sm whitespace-nowrap">{new Date(link.createdAt).toLocaleDateString('pt-BR')}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="icon" className="opacity-0 group-hover:opacity-100 transition-opacity">
+                          <ExternalLink className="h-4 w-4" />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   )

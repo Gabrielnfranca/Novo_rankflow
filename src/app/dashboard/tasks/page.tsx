@@ -39,7 +39,7 @@ export default async function TasksPage() {
       </div>
 
       {/* KPI Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Tarefas em Aberto</CardTitle>
@@ -84,9 +84,9 @@ export default async function TasksPage() {
         </Card>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-7">
+      <div className="grid gap-6 grid-cols-1 lg:grid-cols-7">
         {/* Main Task List */}
-        <Card className="md:col-span-7">
+        <Card className="col-span-1 lg:col-span-7">
           <CardHeader>
             <CardTitle>Fila de Produção</CardTitle>
             <CardDescription>Tarefas prioritárias de todos os clientes.</CardDescription>
@@ -99,23 +99,23 @@ export default async function TasksPage() {
                   </div>
               ) : (
                   tasks.map((task) => (
-                    <div key={task.id} className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors">
+                    <div key={task.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors gap-4">
                       <div className="flex items-start gap-4">
-                        <div className={`mt-1 h-2 w-2 rounded-full ${
+                        <div className={`mt-1 h-2 w-2 rounded-full flex-shrink-0 ${
                           task.column === 'Done' ? 'bg-green-500' : 
                           task.column === 'In Progress' ? 'bg-blue-500' : 'bg-gray-300'
                         }`} />
                         <div>
                           <div className="font-medium">{task.title}</div>
-                          <div className="text-sm text-muted-foreground flex items-center gap-2">
+                          <div className="text-sm text-muted-foreground flex flex-wrap items-center gap-2">
                             <span className="font-semibold text-primary">{task.client?.name || "Sem Cliente"}</span>
-                            <span>•</span>
+                            <span className="hidden sm:inline">•</span>
                             <span>{task.assignee || "Sem responsável"}</span>
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-6">
-                        <div className="text-right hidden sm:block w-24">
+                      <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-6 w-full sm:w-auto pl-6 sm:pl-0">
+                        <div className="text-left sm:text-right w-auto sm:w-24">
                           <div className="text-sm font-medium">
                             {task.dueDate || "-"}
                           </div>
@@ -126,7 +126,7 @@ export default async function TasksPage() {
                             {task.priority}
                           </Badge>
                         </div>
-                        <Button variant="ghost" size="icon">
+                        <Button variant="ghost" size="icon" className="hidden sm:inline-flex">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </div>

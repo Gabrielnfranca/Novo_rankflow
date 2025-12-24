@@ -18,18 +18,18 @@ export default async function ContentPlannerPage() {
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)]">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6 gap-4">
         <div>
           <h2 className="text-2xl font-bold tracking-tight">Content Planner</h2>
           <p className="text-muted-foreground">Gerencie a produção de conteúdo do seu blog.</p>
         </div>
-        <Button className="gap-2 shadow-lg shadow-primary/20">
+        <Button className="gap-2 shadow-lg shadow-primary/20 w-full sm:w-auto">
           <Plus className="h-4 w-4" />
           Nova Pauta
         </Button>
       </div>
 
-      <div className="flex-1 overflow-x-auto pb-4">
+      <div className="flex-1 overflow-x-auto pb-4 -mx-4 px-4 sm:mx-0 sm:px-0">
         <div className="flex h-full min-w-[1200px] gap-6">
           {columns.map((col) => (
             <div key={col.id} className="flex h-full w-80 flex-col rounded-xl bg-muted/30 border border-muted/60 p-3">

@@ -120,61 +120,63 @@ export function MarketplaceView({ items }: MarketplaceViewProps) {
           ))}
         </div>
       ) : (
-        <div className="rounded-md border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[250px]">Domínio</TableHead>
-                <TableHead className="w-[80px]">DR</TableHead>
-                <TableHead className="w-[100px]">Tráfego</TableHead>
-                <TableHead className="w-[150px]">Nicho</TableHead>
-                <TableHead>Descrição</TableHead>
-                <TableHead className="w-[120px]">Preço</TableHead>
-                <TableHead className="w-[120px]">Status</TableHead>
-                <TableHead className="text-right w-[100px]">Ação</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {items.map((item) => (
-                <TableRow key={item.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                        <Globe className="h-4 w-4 text-muted-foreground" />
-                        {item.domain}
-                        <a 
-                          href={`https://${item.domain}`} 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="text-muted-foreground hover:text-primary transition-colors"
-                          title="Abrir site"
-                        >
-                          <ExternalLink className="h-3 w-3" />
-                        </a>
-                    </div>
-                  </TableCell>
-                  <TableCell>{item.dr}</TableCell>
-                  <TableCell>{item.traffic || "-"}</TableCell>
-                  <TableCell><Badge variant="outline">{item.niche || "Geral"}</Badge></TableCell>
-                  <TableCell className="max-w-[200px] truncate text-muted-foreground" title={item.description || ""}>
-                    {item.description || "-"}
-                  </TableCell>
-                  <TableCell className="font-bold text-primary">R$ {item.price.toFixed(2)}</TableCell>
-                  <TableCell>
-                    <Badge variant={item.status === 'Available' ? 'default' : 'secondary'}>
-                        {item.status === 'Available' ? 'Disponível' : item.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end">
-                        <div className="w-[120px]">
-                            <BuyViaWhatsapp item={item} />
-                        </div>
-                    </div>
-                  </TableCell>
+        <div className="rounded-md border bg-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[250px]">Domínio</TableHead>
+                  <TableHead className="w-[80px]">DR</TableHead>
+                  <TableHead className="w-[100px]">Tráfego</TableHead>
+                  <TableHead className="w-[150px]">Nicho</TableHead>
+                  <TableHead>Descrição</TableHead>
+                  <TableHead className="w-[120px]">Preço</TableHead>
+                  <TableHead className="w-[120px]">Status</TableHead>
+                  <TableHead className="text-right w-[100px]">Ação</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {items.map((item) => (
+                  <TableRow key={item.id}>
+                    <TableCell className="font-medium min-w-[200px]">
+                      <div className="flex items-center gap-2">
+                          <Globe className="h-4 w-4 text-muted-foreground" />
+                          {item.domain}
+                          <a 
+                            href={`https://${item.domain}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-muted-foreground hover:text-primary transition-colors"
+                            title="Abrir site"
+                          >
+                            <ExternalLink className="h-3 w-3" />
+                          </a>
+                      </div>
+                    </TableCell>
+                    <TableCell>{item.dr}</TableCell>
+                    <TableCell>{item.traffic || "-"}</TableCell>
+                    <TableCell><Badge variant="outline">{item.niche || "Geral"}</Badge></TableCell>
+                    <TableCell className="max-w-[200px] truncate text-muted-foreground" title={item.description || ""}>
+                      {item.description || "-"}
+                    </TableCell>
+                    <TableCell className="font-bold text-primary whitespace-nowrap">R$ {item.price.toFixed(2)}</TableCell>
+                    <TableCell>
+                      <Badge variant={item.status === 'Available' ? 'default' : 'secondary'}>
+                          {item.status === 'Available' ? 'Disponível' : item.status}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end">
+                          <div className="w-[120px]">
+                              <BuyViaWhatsapp item={item} />
+                          </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
     </div>

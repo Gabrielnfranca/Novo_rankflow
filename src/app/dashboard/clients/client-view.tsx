@@ -196,98 +196,100 @@ export function ClientView({ clients }: ClientViewProps) {
           </Button>
         </div>
       ) : (
-        <div className="rounded-md border bg-card">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-[250px]">Cliente</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Contrato</TableHead>
-                <TableHead>Valor Mensal</TableHead>
-                <TableHead>Keywords</TableHead>
-                <TableHead>Backlinks</TableHead>
-                <TableHead className="text-right">Ações</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredClients.map((client) => (
-                <TableRow key={client.id}>
-                  <TableCell className="font-medium">
-                    <div className="flex items-center gap-3">
-                        <Avatar className="h-8 w-8">
-                            <AvatarImage src={client.logo} />
-                            <AvatarFallback>{client.name.substring(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col">
-                            <span>{client.name}</span>
-                            {client.url && <span className="text-xs text-muted-foreground">{client.url}</span>}
-                        </div>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="outline" className={
-                      client.status === "Active" ? "bg-green-500/10 text-green-600 border-green-200" : 
-                      client.status === "Inactive" ? "bg-red-500/10 text-red-600 border-red-200" :
-                      "bg-yellow-500/10 text-yellow-600 border-yellow-200"
-                    }>
-                      {client.status === "Active" ? "Ativo" : client.status === "Inactive" ? "Inativo" : client.status || "Ativo"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex flex-col">
-                        <span className="text-sm">{client.contractDuration || "-"}</span>
-                        {client.startDate && (
-                            <span className="text-xs text-muted-foreground">
-                                Desde {new Date(client.startDate).toLocaleDateString('pt-BR')}
-                            </span>
-                        )}
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {client.monthlyValue ? (
-                        <span className="font-medium">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(client.monthlyValue)}
-                        </span>
-                    ) : "-"}
-                  </TableCell>
-                  <TableCell>{client._count?.keywords || 0}</TableCell>
-                  <TableCell>{client._count?.backlinks || 0}</TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                        <Link href={`/dashboard/clients/${client.id}`}>
-                            <Button variant="ghost" size="sm">
-                                Painel
-                            </Button>
-                        </Link>
-                        <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="icon" className="h-8 w-8">
-                                <MoreHorizontal className="h-4 w-4" />
-                                </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem>Editar</DropdownMenuItem>
-                                <DropdownMenuItem 
-                                    className="text-red-600 cursor-pointer"
-                                    onSelect={() => setClientToDelete(client)}
-                                >
-                                    Excluir
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-                        </DropdownMenu>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-              {filteredClients.length === 0 && (
+        <div className="rounded-md border bg-card overflow-hidden">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                        Nenhum cliente encontrado.
-                    </TableCell>
+                  <TableHead className="w-[250px]">Cliente</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Contrato</TableHead>
+                  <TableHead>Valor Mensal</TableHead>
+                  <TableHead>Keywords</TableHead>
+                  <TableHead>Backlinks</TableHead>
+                  <TableHead className="text-right">Ações</TableHead>
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {filteredClients.map((client) => (
+                  <TableRow key={client.id}>
+                    <TableCell className="font-medium min-w-[200px]">
+                      <div className="flex items-center gap-3">
+                          <Avatar className="h-8 w-8">
+                              <AvatarImage src={client.logo} />
+                              <AvatarFallback>{client.name.substring(0, 2).toUpperCase()}</AvatarFallback>
+                          </Avatar>
+                          <div className="flex flex-col">
+                              <span>{client.name}</span>
+                              {client.url && <span className="text-xs text-muted-foreground">{client.url}</span>}
+                          </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className={
+                        client.status === "Active" ? "bg-green-500/10 text-green-600 border-green-200" : 
+                        client.status === "Inactive" ? "bg-red-500/10 text-red-600 border-red-200" :
+                        "bg-yellow-500/10 text-yellow-600 border-yellow-200"
+                      }>
+                        {client.status === "Active" ? "Ativo" : client.status === "Inactive" ? "Inativo" : client.status || "Ativo"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      <div className="flex flex-col">
+                          <span className="text-sm">{client.contractDuration || "-"}</span>
+                          {client.startDate && (
+                              <span className="text-xs text-muted-foreground">
+                                  Desde {new Date(client.startDate).toLocaleDateString('pt-BR')}
+                              </span>
+                          )}
+                      </div>
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap">
+                      {client.monthlyValue ? (
+                          <span className="font-medium">
+                              {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(client.monthlyValue)}
+                          </span>
+                      ) : "-"}
+                    </TableCell>
+                    <TableCell>{client._count?.keywords || 0}</TableCell>
+                    <TableCell>{client._count?.backlinks || 0}</TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                          <Link href={`/dashboard/clients/${client.id}`}>
+                              <Button variant="ghost" size="sm">
+                                  Painel
+                              </Button>
+                          </Link>
+                          <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                  <Button variant="ghost" size="icon" className="h-8 w-8">
+                                  <MoreHorizontal className="h-4 w-4" />
+                                  </Button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end">
+                                  <DropdownMenuItem>Editar</DropdownMenuItem>
+                                  <DropdownMenuItem 
+                                      className="text-red-600 cursor-pointer"
+                                      onSelect={() => setClientToDelete(client)}
+                                  >
+                                      Excluir
+                                  </DropdownMenuItem>
+                              </DropdownMenuContent>
+                          </DropdownMenu>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+                {filteredClients.length === 0 && (
+                  <TableRow>
+                      <TableCell colSpan={7} className="h-24 text-center">
+                          Nenhum cliente encontrado.
+                      </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </div>
       )}
     </div>
