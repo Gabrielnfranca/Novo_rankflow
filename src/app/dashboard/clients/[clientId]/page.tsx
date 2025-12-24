@@ -5,11 +5,13 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Globe, MapPin, CheckCircle2, Clock, FileWarning, ArrowRight, TrendingUp, Link as LinkIcon, FileText } from "lucide-react"
 import Link from "next/link"
+import { getClientReportStats } from "@/app/actions"
+import { ClientReportDialog } from "@/components/client-report-dialog"
 
 export default async function ClientPage({ params }: { params: Promise<{ clientId: string }> }) {
   const { clientId } = await params
   
-  const [client, overdueBacklinks, pendingTasks, technicalAudit] = await Promise.all([
+  const [client, overdueBacklinks, pendingTasks, technicalAudit, reportData] = await Promise.all([
     prisma.client.findUnique({
       where: { id: clientId },
       include: {
@@ -38,7 +40,8 @@ export default async function ClientPage({ params }: { params: Promise<{ clientI
     }),
     prisma.technicalAudit.findUnique({
       where: { clientId }
-    })
+    }),
+    getClientReportStats(clientId)
   ])
 
   if (!client) {
@@ -85,6 +88,7 @@ export default async function ClientPage({ params }: { params: Promise<{ clientI
           </div>
         </div>
         <div className="flex gap-2">
+            <ClientReportDialog data={reportData} />
             <Button variant="outline" asChild>
                 <Link href={`/dashboard/clients/${clientId}/settings`}>Editar Cliente</Link>
             </Button>

@@ -593,3 +593,102 @@ export async function deleteKeyword(id: number, clientId?: string) {
     return { error: "Erro ao excluir keyword" }
   }
 }
+
+export async function getClientReportStats(clientId: string) {
+  try {
+    const session = await getSession()
+    const user = session?.user
+
+    const client = await prisma.client.findUnique({
+      where: { id: clientId },
+    })
+
+    if (!client) return null
+    if (user?.role !== 'ADMIN' && client.userId !== user?.id) return null
+
+    const sevenDaysAgo = new Date()
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
+
+    const [
+      totalKeywords,
+      keywords,
+      totalBacklinks,
+      newBacklinks,
+      publishedBacklinks,
+      completedTasks,
+      newContent
+    ] = await Promise.all([
+      prisma.keyword.count({ where: { clientId } }),
+      prisma.keyword.findMany({ where: { clientId } }),
+      prisma.backlink.count({ where: { clientId } }),
+      prisma.backlink.count({ 
+        where: { 
+          clientId, 
+          createdAt: { gte: sevenDaysAgo } 
+        } 
+      }),
+      prisma.backlink.count({ 
+        where: { 
+          clientId, 
+          status: 'Published',
+          updatedAt: { gte: sevenDaysAgo } 
+        } 
+      }),
+      prisma.contentTask.count({ 
+        where: { 
+          clientId, 
+          column: 'Done',
+          // Assuming we might want to track when it was moved to Done, but schema doesn't have completedAt. 
+          // Using createdAt for new tasks for now or we'd need to update schema.
+          // Let's count NEW tasks for now as a proxy for activity
+          createdAt: { gte: sevenDaysAgo }
+        } 
+      }),
+      // Assuming Content Items are stored in ContentTask or similar? 
+      // Based on schema, ContentTask is the model.
+      prisma.contentTask.count({
+        where: {
+            clientId,
+            createdAt: { gte: sevenDaysAgo }
+        }
+      })
+    ])
+
+    const top3 = keywords.filter(k => k.position > 0 && k.position <= 3).length
+    const top10 = keywords.filter(k => k.position > 0 && k.position <= 10).length
+    const top100 = keywords.filter(k => k.position > 0 && k.position <= 100).length
+    
+    // Calculate movers
+    const winners = keywords
+      .filter(k => k.position > 0 && k.previousPosition > 0 && k.position < k.previousPosition)
+      .sort((a, b) => (b.previousPosition - b.position) - (a.previousPosition - a.position))
+      .slice(0, 5)
+
+    return {
+      clientName: client.name,
+      period: {
+        start: sevenDaysAgo,
+        end: new Date()
+      },
+      seo: {
+        totalKeywords,
+        top3,
+        top10,
+        top100,
+        winners
+      },
+      backlinks: {
+        total: totalBacklinks,
+        new: newBacklinks,
+        published: publishedBacklinks
+      },
+      content: {
+        newTasks: newContent,
+        completedTasks: completedTasks
+      }
+    }
+  } catch (error) {
+    console.error("Erro ao gerar relatório:", error)
+    return null
+  }
+}
