@@ -320,6 +320,9 @@ export async function addBacklink(formData: FormData) {
   
   const followUpDateStr = formData.get("followUpDate") as string
   const followUpDate = followUpDateStr ? new Date(followUpDateStr) : undefined
+  
+  const costStr = formData.get("cost") as string
+  const cost = costStr ? parseFloat(costStr.replace("R$", "").replace(".", "").replace(",", ".")) : 0
 
   if (!domain) {
     return { error: "Domínio é obrigatório" }
@@ -343,6 +346,7 @@ export async function addBacklink(formData: FormData) {
         targetUrl,
         dateSent,
         followUpDate,
+        cost,
         clientId: clientId || undefined,
       },
     })
@@ -380,6 +384,9 @@ export async function updateBacklink(formData: FormData) {
   const followUpDateStr = formData.get("followUpDate") as string
   const followUpDate = followUpDateStr ? new Date(followUpDateStr) : null // Use null to clear if empty
 
+  const costStr = formData.get("cost") as string
+  const cost = costStr ? parseFloat(costStr.replace("R$", "").replace(".", "").replace(",", ".")) : 0
+
   if (!id || !domain) {
     return { error: "ID e Domínio são obrigatórios" }
   }
@@ -403,6 +410,7 @@ export async function updateBacklink(formData: FormData) {
         targetUrl,
         dateSent,
         followUpDate,
+        cost,
       },
     })
 

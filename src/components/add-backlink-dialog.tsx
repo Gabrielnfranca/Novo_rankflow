@@ -66,7 +66,7 @@ export function AddBacklinkDialog({ clientId }: { clientId?: string }) {
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit} className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="domain">Domínio (Site Parceiro)</Label>
               <Input id="domain" name="domain" placeholder="ex: siteparceiro.com" required />
@@ -85,6 +85,10 @@ export function AddBacklinkDialog({ clientId }: { clientId?: string }) {
                   <SelectItem value="Rejected">Rejeitado</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="cost">Custo (R$)</Label>
+              <Input id="cost" name="cost" placeholder="0,00" />
             </div>
           </div>
 

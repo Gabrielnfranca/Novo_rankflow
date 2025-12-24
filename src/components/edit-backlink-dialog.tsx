@@ -44,6 +44,7 @@ interface Backlink {
   dateSent: Date | null
   followUpDate: Date | null
   clientId: string | null
+  cost: number | null
 }
 
 export function EditBacklinkDialog({ backlink, clientId }: { backlink: Backlink, clientId?: string }) {
@@ -92,7 +93,7 @@ export function EditBacklinkDialog({ backlink, clientId }: { backlink: Backlink,
           </DialogDescription>
         </DialogHeader>
         <form onSubmit={onSubmit} className="grid gap-4 py-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             <div className="grid gap-2">
               <Label htmlFor="domain">Domínio (Site Parceiro)</Label>
               <Input id="domain" name="domain" defaultValue={backlink.domain} required />
@@ -111,6 +112,15 @@ export function EditBacklinkDialog({ backlink, clientId }: { backlink: Backlink,
                   <SelectItem value="Rejected">Rejeitado</SelectItem>
                 </SelectContent>
               </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="cost">Custo (R$)</Label>
+              <Input 
+                id="cost" 
+                name="cost" 
+                defaultValue={backlink.cost ? backlink.cost.toFixed(2).replace('.', ',') : ""} 
+                placeholder="0,00" 
+              />
             </div>
           </div>
 
