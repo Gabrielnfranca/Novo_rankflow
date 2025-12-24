@@ -166,13 +166,14 @@ export default async function BacklinksPage({ params }: { params: Promise<{ clie
                     </div>
                   </TableHead>
                   <TableHead className="w-[120px] text-center">Docs</TableHead>
+                  <TableHead className="w-[200px] text-center">Link Publicado</TableHead>
                   <TableHead className="w-[120px] text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {backlinks.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={11} className="h-24 text-center text-muted-foreground">
+                    <TableCell colSpan={12} className="h-24 text-center text-muted-foreground">
                       Nenhum backlink cadastrado. Inicie uma prospecção.
                     </TableCell>
                   </TableRow>
@@ -255,21 +256,24 @@ export default async function BacklinksPage({ params }: { params: Promise<{ clie
                         </TableCell>
                         <TableCell className="align-middle text-center">
                           <div className="flex gap-2 justify-center">
-                              {backlink.driveUrl && (
+                              {backlink.driveUrl ? (
                                   <a href={backlink.driveUrl} target="_blank" rel="noreferrer" title="Ver Conteúdo (Drive)">
                                       <Button variant="ghost" size="icon" className="h-8 w-8 text-blue-600 hover:text-blue-700 hover:bg-blue-50">
                                           <FileText className="h-4 w-4" />
                                       </Button>
                                   </a>
-                              )}
-                              {backlink.postUrl && (
-                                  <a href={backlink.postUrl} target="_blank" rel="noreferrer" title="Ver Post Publicado">
-                                      <Button variant="ghost" size="icon" className="h-8 w-8 text-green-600 hover:text-green-700 hover:bg-green-50">
-                                          <ExternalLink className="h-4 w-4" />
-                                      </Button>
-                                  </a>
-                              )}
+                              ) : "-"}
                           </div>
+                        </TableCell>
+                        <TableCell className="align-middle text-center">
+                            {backlink.postUrl ? (
+                                <a href={backlink.postUrl} target="_blank" rel="noreferrer" className="flex items-center justify-center gap-1 text-sm text-green-600 hover:text-green-700 hover:underline max-w-[180px] truncate mx-auto">
+                                    <ExternalLink className="h-3 w-3 flex-shrink-0" />
+                                    <span className="truncate">{backlink.postUrl.replace(/^https?:\/\//, '')}</span>
+                                </a>
+                            ) : (
+                                <span className="text-muted-foreground">-</span>
+                            )}
                         </TableCell>
                         <TableCell className="text-center align-middle">
                           <div className="flex items-center justify-center gap-2">
