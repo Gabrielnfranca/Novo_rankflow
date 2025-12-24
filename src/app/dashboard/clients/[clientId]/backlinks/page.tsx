@@ -165,7 +165,7 @@ export default async function BacklinksPage({ params }: { params: Promise<{ clie
                       </TooltipProvider>
                     </div>
                   </TableHead>
-                  <TableHead className="w-[120px] text-center">Links</TableHead>
+                  <TableHead className="w-[120px] text-center">Docs</TableHead>
                   <TableHead className="w-[120px] text-center">Ações</TableHead>
                 </TableRow>
               </TableHeader>
