@@ -609,6 +609,12 @@ export async function getClientReportStats(clientId: string) {
     const sevenDaysAgo = new Date()
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
+    const thirtyDaysAgo = new Date()
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30)
+    
+    const sixMonthsAgo = new Date()
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+
     const [
       totalKeywords,
       keywords,
@@ -616,7 +622,9 @@ export async function getClientReportStats(clientId: string) {
       newBacklinks,
       publishedBacklinks,
       completedTasks,
-      newContent
+      newContent,
+      keywordHistory,
+      backlinkHistoryData
     ] = await Promise.all([
       prisma.keyword.count({ where: { clientId } }),
       prisma.keyword.findMany({ where: { clientId } }),
@@ -638,19 +646,28 @@ export async function getClientReportStats(clientId: string) {
         where: { 
           clientId, 
           column: 'Done',
-          // Assuming we might want to track when it was moved to Done, but schema doesn't have completedAt. 
-          // Using createdAt for new tasks for now or we'd need to update schema.
-          // Let's count NEW tasks for now as a proxy for activity
           createdAt: { gte: sevenDaysAgo }
         } 
       }),
-      // Assuming Content Items are stored in ContentTask or similar? 
-      // Based on schema, ContentTask is the model.
       prisma.contentTask.count({
         where: {
             clientId,
             createdAt: { gte: sevenDaysAgo }
         }
+      }),
+      prisma.keywordHistory.findMany({
+        where: {
+            keyword: { clientId },
+            date: { gte: thirtyDaysAgo }
+        },
+        include: { keyword: true }
+      }),
+      prisma.backlink.findMany({
+        where: {
+            clientId,
+            createdAt: { gte: sixMonthsAgo }
+        },
+        select: { createdAt: true }
       })
     ])
 
@@ -664,6 +681,52 @@ export async function getClientReportStats(clientId: string) {
       .sort((a, b) => (b.previousPosition - b.position) - (a.previousPosition - a.position))
       .slice(0, 5)
 
+    // Process Rank History
+    const rankHistoryMap = new Map<string, { top3: number, top10: number, top100: number }>()
+    
+    // Initialize with 0s for the last 30 days
+    for (let i = 0; i < 30; i++) {
+        const d = new Date()
+        d.setDate(d.getDate() - i)
+        const dateStr = d.toISOString().split('T')[0]
+        rankHistoryMap.set(dateStr, { top3: 0, top10: 0, top100: 0 })
+    }
+
+    // Populate with history data
+    keywordHistory.forEach(h => {
+        const dateStr = h.date.toISOString().split('T')[0]
+        if (rankHistoryMap.has(dateStr)) {
+            const entry = rankHistoryMap.get(dateStr)!
+            if (h.position > 0 && h.position <= 3) entry.top3++
+            if (h.position > 0 && h.position <= 10) entry.top10++
+            if (h.position > 0 && h.position <= 100) entry.top100++
+        }
+    })
+
+    const rankHistory = Array.from(rankHistoryMap.entries())
+        .map(([date, data]) => ({ date, ...data }))
+        .sort((a, b) => a.date.localeCompare(b.date))
+
+    // Process Backlink History
+    const backlinkHistoryMap = new Map<string, number>()
+    for (let i = 0; i < 6; i++) {
+        const d = new Date()
+        d.setMonth(d.getMonth() - i)
+        const monthStr = d.toISOString().slice(0, 7) // YYYY-MM
+        backlinkHistoryMap.set(monthStr, 0)
+    }
+
+    backlinkHistoryData.forEach(b => {
+        const monthStr = b.createdAt.toISOString().slice(0, 7)
+        if (backlinkHistoryMap.has(monthStr)) {
+            backlinkHistoryMap.set(monthStr, backlinkHistoryMap.get(monthStr)! + 1)
+        }
+    })
+
+    const backlinkHistory = Array.from(backlinkHistoryMap.entries())
+        .map(([date, count]) => ({ date, count }))
+        .sort((a, b) => a.date.localeCompare(b.date))
+
     return {
       clientName: client.name,
       period: {
@@ -675,12 +738,14 @@ export async function getClientReportStats(clientId: string) {
         top3,
         top10,
         top100,
-        winners
+        winners,
+        history: rankHistory
       },
       backlinks: {
         total: totalBacklinks,
         new: newBacklinks,
-        published: publishedBacklinks
+        published: publishedBacklinks,
+        history: backlinkHistory
       },
       content: {
         newTasks: newContent,
