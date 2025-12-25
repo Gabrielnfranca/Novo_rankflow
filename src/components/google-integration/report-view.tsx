@@ -29,7 +29,7 @@ export function ReportView({ clientId }: ReportViewProps) {
     const startDate = format(subDays(new Date(), parseInt(dateRange)), 'yyyy-MM-dd');
     
     const res = await fetchGoogleReport(clientId, startDate, endDate);
-    if (!res.error) {
+    if ('gscData' in res) {
       setData(res);
     }
     setLoading(false);
