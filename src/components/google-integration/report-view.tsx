@@ -30,7 +30,7 @@ export function ReportView({ clientId }: ReportViewProps) {
     
     const res = await fetchGoogleReport(clientId, startDate, endDate);
     if ('gscData' in res) {
-      setData(res);
+      setData({ gscData: res.gscData, ga4Data: res.ga4Data });
     }
     setLoading(false);
   };
