@@ -100,8 +100,8 @@ export async function fetchGoogleReport(clientId: string, startDate: string, end
 
     const auth = await getAuthenticatedClient(clientId);
     
-    let gscData = [];
-    let ga4Data = null;
+    let gscData: any[] = [];
+    let ga4Data: any = null;
 
     if (client.gscUrl) {
       gscData = await getSearchConsoleData(auth, client.gscUrl, startDate, endDate);
