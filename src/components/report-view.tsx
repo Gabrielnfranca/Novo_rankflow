@@ -14,7 +14,7 @@ interface ReportViewProps {
 }
 
 export function ReportView({ data }: ReportViewProps) {
-  const { client, period, metrics, charts, topKeywords, topPages, workLog } = data;
+  const { client, period, metrics, charts, topKeywords, topPages, workLog, trackedKeywords } = data;
 
   // Format Chart Data
   const chartData = charts.gsc?.map((row: any) => ({
@@ -35,7 +35,7 @@ export function ReportView({ data }: ReportViewProps) {
   };
 
   return (
-    <div className="max-w-[210mm] mx-auto bg-white min-h-screen p-8 md:p-12 print:p-0 print:max-w-none">
+    <div className="max-w-[210mm] mx-auto bg-white min-h-screen p-8 md:p-12 print:p-0 print:max-w-none print:min-h-0 print:w-full">
       {/* Print Button - Hidden when printing */}
       <div className="mb-8 flex justify-end gap-4 print:hidden">
         <DashboardDateRangePicker />
@@ -76,7 +76,7 @@ export function ReportView({ data }: ReportViewProps) {
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-3 gap-6 mb-12 break-inside-avoid">
         <div className="p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-slate-500">Sessões (Tráfego)</span>
@@ -115,7 +115,7 @@ export function ReportView({ data }: ReportViewProps) {
       </div>
 
       {/* Chart */}
-      <div className="mb-12">
+      <div className="mb-12 break-inside-avoid">
         <h3 className="text-lg font-semibold text-slate-900 mb-6">Evolução de Tráfego Orgânico</h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -138,6 +138,31 @@ export function ReportView({ data }: ReportViewProps) {
           </ResponsiveContainer>
         </div>
       </div>
+
+      {/* Tracked Keywords Section */}
+      {trackedKeywords && trackedKeywords.length > 0 && (
+        <div className="mb-12 break-inside-avoid">
+          <h3 className="text-lg font-semibold text-slate-900 mb-4 border-b pb-2">Monitoramento de Palavras-Chave</h3>
+          <div className="grid grid-cols-2 gap-6">
+            {trackedKeywords.map((kw: any) => (
+              <div key={kw.id} className="flex justify-between items-center p-3 bg-slate-50 rounded-lg border border-slate-100">
+                <span className="font-medium text-slate-700">{kw.term}</span>
+                <div className="flex items-center gap-4">
+                  <div className="text-right">
+                    <span className="block text-xs text-slate-400">Posição</span>
+                    <span className="font-bold text-slate-900 text-lg">{kw.position > 0 ? kw.position : '-'}</span>
+                  </div>
+                  {kw.previousPosition > 0 && (
+                    <div className={`text-xs font-medium ${kw.position < kw.previousPosition ? 'text-green-600' : kw.position > kw.previousPosition ? 'text-red-600' : 'text-slate-400'}`}>
+                      {kw.position < kw.previousPosition ? <ArrowUp className="h-4 w-4" /> : kw.position > kw.previousPosition ? <ArrowDown className="h-4 w-4" /> : '-'}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Two Columns: Keywords & Pages */}
       <div className="grid grid-cols-2 gap-12 mb-12 break-inside-avoid">

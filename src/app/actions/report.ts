@@ -22,7 +22,8 @@ export async function getClientReportData(clientId: string, startDate: string, e
     currentGoogle,
     prevGoogle,
     completedTasks,
-    createdBacklinks
+    createdBacklinks,
+    trackedKeywords
   ] = await Promise.all([
     prisma.client.findUnique({
       where: { id: clientId },
@@ -50,6 +51,11 @@ export async function getClientReportData(clientId: string, startDate: string, e
         }
       },
       orderBy: { createdAt: 'desc' }
+    }),
+    prisma.keyword.findMany({
+      where: { clientId },
+      orderBy: { position: 'asc' },
+      take: 10
     })
   ]);
 
@@ -69,6 +75,8 @@ export async function getClientReportData(clientId: string, startDate: string, e
   const currentImpressions = currentGoogle.gsc?.performance?.reduce((acc: number, row: any) => acc + row.impressions, 0) || 0;
   const prevImpressions = prevGoogle.gsc?.performance?.reduce((acc: number, row: any) => acc + row.impressions, 0) || 0;
 
+  const backlinkCost = createdBacklinks.reduce((acc, link) => acc + (link.cost || 0), 0);
+
   return {
     client,
     period: {
@@ -81,6 +89,7 @@ export async function getClientReportData(clientId: string, startDate: string, e
       sessions: { value: currentSessions, growth: calculateGrowth(currentSessions, prevSessions) },
       clicks: { value: currentClicks, growth: calculateGrowth(currentClicks, prevClicks) },
       impressions: { value: currentImpressions, growth: calculateGrowth(currentImpressions, prevImpressions) },
+      backlinkCost
     },
     charts: {
       gsc: currentGoogle.gsc?.performance || [],
@@ -88,6 +97,7 @@ export async function getClientReportData(clientId: string, startDate: string, e
     },
     topKeywords: currentGoogle.gsc?.topQueries || [],
     topPages: currentGoogle.ga4?.topPages?.rows || [],
+    trackedKeywords: trackedKeywords || [],
     workLog: {
       tasks: completedTasks,
       backlinks: createdBacklinks
