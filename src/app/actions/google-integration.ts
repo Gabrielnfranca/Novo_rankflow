@@ -67,8 +67,8 @@ export async function fetchGoogleProperties(clientId: string) {
     }
 
     // Flatten GA4 properties
-    const ga4Properties = ga4Accounts.flatMap(account => 
-      account.propertySummaries?.map(prop => ({
+    const ga4Properties = ga4Accounts.flatMap((account: any) => 
+      account.propertySummaries?.map((prop: any) => ({
         id: prop.property, // properties/123456
         name: `${account.displayName} - ${prop.displayName}`,
         propertyId: prop.property?.split('/')[1] // Just the ID
