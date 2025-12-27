@@ -20,11 +20,11 @@ export function DashboardShell({ children, clients = [], user }: DashboardShellP
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background">
+    <div className="flex h-screen overflow-hidden bg-background print:h-auto print:overflow-visible">
       {/* Desktop Sidebar */}
       <aside 
         className={cn(
-          "relative z-20 hidden transition-all duration-300 md:block border-r",
+          "relative z-20 hidden transition-all duration-300 md:block border-r print:hidden",
           isCollapsed ? "w-20" : "w-72"
         )}
       >
@@ -37,9 +37,9 @@ export function DashboardShell({ children, clients = [], user }: DashboardShellP
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-background/50">
+      <div className="flex flex-1 flex-col overflow-hidden bg-background/50 print:overflow-visible print:h-auto">
         {/* Header */}
-        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 md:px-6 backdrop-blur-md transition-all">
+        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 md:px-6 backdrop-blur-md transition-all print:hidden">
           
           {/* Mobile Menu Trigger */}
           <div className="md:hidden">
@@ -77,8 +77,8 @@ export function DashboardShell({ children, clients = [], user }: DashboardShellP
         </header>
 
         {/* Page Content */}
-        <main className="flex-1 overflow-y-auto p-4 md:p-8">
-          <div className="mx-auto max-w-6xl space-y-6 md:space-y-8">
+        <main className="flex-1 overflow-y-auto p-4 md:p-8 print:overflow-visible print:h-auto print:p-0">
+          <div className="mx-auto max-w-6xl space-y-6 md:space-y-8 print:max-w-none print:space-y-0">
             {children}
           </div>
         </main>

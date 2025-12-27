@@ -127,3 +127,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+@media print {
+  html, body {
+    height: initial !important;
+    overflow: initial !important;
+    -webkit-print-color-adjust: exact;
+  }
+  
+  /* Ensure no scrollbars in print */
+  * {
+    overflow: visible !important;
+  }
+}
