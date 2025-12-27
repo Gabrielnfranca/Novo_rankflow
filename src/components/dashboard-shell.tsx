@@ -20,7 +20,7 @@ export function DashboardShell({ children, clients = [], user }: DashboardShellP
   const [isCollapsed, setIsCollapsed] = useState(false)
 
   return (
-    <div className="flex h-screen overflow-hidden bg-background print:h-auto print:overflow-visible">
+    <div className="flex h-screen overflow-hidden bg-background print:h-auto print:overflow-visible print:bg-white">
       {/* Desktop Sidebar */}
       <aside 
         className={cn(
@@ -37,7 +37,7 @@ export function DashboardShell({ children, clients = [], user }: DashboardShellP
       </aside>
 
       {/* Main Content */}
-      <div className="flex flex-1 flex-col overflow-hidden bg-background/50 print:overflow-visible print:h-auto">
+      <div className="flex flex-1 flex-col overflow-hidden bg-background/50 print:overflow-visible print:h-auto print:bg-white">
         {/* Header */}
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/80 px-4 md:px-6 backdrop-blur-md transition-all print:hidden">
           

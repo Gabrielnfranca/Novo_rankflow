@@ -46,7 +46,7 @@ export function ReportView({ data }: ReportViewProps) {
       </div>
 
       {/* Header */}
-      <div className="flex justify-between items-start mb-12">
+      <div className="flex justify-between items-start mb-12 print:mb-6">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Relatório de Performance</h1>
           <p className="text-slate-500 mt-1">SEO & Tráfego Orgânico</p>
@@ -65,7 +65,7 @@ export function ReportView({ data }: ReportViewProps) {
       </div>
 
       {/* Executive Summary Placeholder */}
-      <div className="mb-12 p-6 bg-slate-50 rounded-lg border border-slate-100">
+      <div className="mb-12 p-6 bg-slate-50 rounded-lg border border-slate-100 print:mb-6">
         <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">Resumo Executivo</h3>
         <p className="text-slate-600 leading-relaxed">
           Neste período, focamos em expandir a autoridade do domínio através de backlinks estratégicos e otimização de conteúdo.
@@ -76,7 +76,7 @@ export function ReportView({ data }: ReportViewProps) {
       </div>
 
       {/* KPI Grid */}
-      <div className="grid grid-cols-3 gap-6 mb-12 break-inside-avoid">
+      <div className="grid grid-cols-3 gap-6 mb-12 break-inside-avoid print:mb-6">
         <div className="p-6 rounded-xl border border-slate-200 bg-white shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <span className="text-sm font-medium text-slate-500">Sessões (Tráfego)</span>
@@ -115,7 +115,7 @@ export function ReportView({ data }: ReportViewProps) {
       </div>
 
       {/* Chart */}
-      <div className="mb-12 break-inside-avoid">
+      <div className="mb-12 break-inside-avoid print:mb-6">
         <h3 className="text-lg font-semibold text-slate-900 mb-6">Evolução de Tráfego Orgânico</h3>
         <div className="h-[300px] w-full">
           <ResponsiveContainer width="100%" height="100%">
@@ -141,7 +141,7 @@ export function ReportView({ data }: ReportViewProps) {
 
       {/* Tracked Keywords Section */}
       {trackedKeywords && trackedKeywords.length > 0 && (
-        <div className="mb-12 break-inside-avoid">
+        <div className="mb-12 break-inside-avoid print:mb-6">
           <h3 className="text-lg font-semibold text-slate-900 mb-4 border-b pb-2">Monitoramento de Palavras-Chave</h3>
           <div className="grid grid-cols-2 gap-6">
             {trackedKeywords.map((kw: any) => (
@@ -165,7 +165,7 @@ export function ReportView({ data }: ReportViewProps) {
       )}
 
       {/* Two Columns: Keywords & Pages */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12 break-inside-avoid print:grid-cols-1 print:gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12 break-inside-avoid print:grid-cols-1 print:gap-8 print:mb-6">
         {/* Top Keywords */}
         <div>
           <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
