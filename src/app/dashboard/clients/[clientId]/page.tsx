@@ -69,7 +69,7 @@ export default async function ClientPage({ params }: { params: Promise<{ clientI
       where: {
         clientId,
         column: 'Done',
-        updatedAt: { gte: startDateObj }
+        // updatedAt: { gte: startDateObj } // Campo não existe no schema, removendo filtro de data por enquanto
       }
     })
   ])
