@@ -9,14 +9,26 @@ import { getClientReportStats } from "@/app/actions"
 import { ClientReportDialog } from "@/components/client-report-dialog"
 import { getGoogleDashboardData } from "@/app/actions/google-integration"
 import { ClientSeoDashboard } from "@/components/client-seo-dashboard"
+import { DashboardDateRangePicker } from "@/components/dashboard-date-range-picker"
 import { subDays, format } from "date-fns"
 
-export default async function ClientPage({ params }: { params: Promise<{ clientId: string }> }) {
+export default async function ClientPage({ 
+  params, 
+  searchParams 
+}: { 
+  params: Promise<{ clientId: string }>,
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
+}) {
   const { clientId } = await params
+  const resolvedSearchParams = await searchParams
   
-  const endDate = format(new Date(), 'yyyy-MM-dd');
-  const startDate = format(subDays(new Date(), 28), 'yyyy-MM-dd');
-  const startDateObj = subDays(new Date(), 28);
+  const fromParam = typeof resolvedSearchParams.from === 'string' ? resolvedSearchParams.from : undefined
+  const toParam = typeof resolvedSearchParams.to === 'string' ? resolvedSearchParams.to : undefined
+
+  const endDate = toParam || format(new Date(), 'yyyy-MM-dd');
+  const startDate = fromParam || format(subDays(new Date(), 28), 'yyyy-MM-dd');
+  // Adjust startDateObj to handle timezone issues or just use the string date for parsing
+  const startDateObj = new Date(startDate + 'T00:00:00');
 
   const [
     client, 
@@ -117,7 +129,8 @@ export default async function ClientPage({ params }: { params: Promise<{ clientI
             </Badge>
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+            <DashboardDateRangePicker />
             <ClientReportDialog data={reportData} />
             <Button variant="outline" asChild>
                 <Link href={`/dashboard/clients/${clientId}/settings`}>Editar Cliente</Link>
