@@ -10,6 +10,7 @@ import {
   getSearchConsoleData,
   getGA4Data,
   getSearchConsoleTopQueries,
+  getSearchConsoleTopPages,
   getGA4TopPages
 } from '@/lib/google';
 import { revalidatePath } from 'next/cache';
@@ -107,11 +108,12 @@ export async function getGoogleDashboardData(clientId: string, startDate: string
 
     if (client.gscUrl) {
       try {
-        const [performance, topQueries] = await Promise.all([
+        const [performance, topQueries, topPages] = await Promise.all([
           getSearchConsoleData(auth, client.gscUrl, startDate, endDate),
-          getSearchConsoleTopQueries(auth, client.gscUrl, startDate, endDate)
+          getSearchConsoleTopQueries(auth, client.gscUrl, startDate, endDate),
+          getSearchConsoleTopPages(auth, client.gscUrl, startDate, endDate)
         ]);
-        results.gsc = { performance, topQueries };
+        results.gsc = { performance, topQueries, topPages };
       } catch (e) {
         console.error('Error fetching GSC data', e);
       }

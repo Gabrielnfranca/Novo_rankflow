@@ -124,6 +124,20 @@ export async function getSearchConsoleTopQueries(auth: any, siteUrl: string, sta
   return res.data.rows || [];
 }
 
+export async function getSearchConsoleTopPages(auth: any, siteUrl: string, startDate: string, endDate: string) {
+  const searchconsole = google.searchconsole({ version: 'v1', auth });
+  const res = await searchconsole.searchanalytics.query({
+    siteUrl,
+    requestBody: {
+      startDate,
+      endDate,
+      dimensions: ['page'],
+      rowLimit: 10,
+    },
+  });
+  return res.data.rows || [];
+}
+
 export async function getGA4Data(auth: any, propertyId: string, startDate: string, endDate: string) {
   const analyticsData = google.analyticsdata({ version: 'v1beta', auth });
   const res = await analyticsData.properties.runReport({

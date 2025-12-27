@@ -10,6 +10,7 @@ interface ClientSeoDashboardProps {
     gsc: {
       performance: any[];
       topQueries: any[];
+      topPages: any[];
     } | null;
     ga4: {
       traffic: any;
@@ -201,10 +202,41 @@ export function ClientSeoDashboard({ data, recentActivity }: ClientSeoDashboardP
                     <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0">
                       <div className="flex items-center gap-2 overflow-hidden">
                         <Search className="h-4 w-4 text-muted-foreground flex-shrink-0" />
-                        <span className="text-sm font-medium truncate">{query.keys[0]}</span>
+                        <div className="flex flex-col overflow-hidden">
+                          <span className="text-sm font-medium truncate">{query.keys[0]}</span>
+                          <span className="text-xs text-muted-foreground">Posição média: {query.position.toFixed(1)}</span>
+                        </div>
                       </div>
                       <div className="text-sm text-muted-foreground whitespace-nowrap">
                         {query.clicks} cliques
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-1 mt-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Páginas Mais Rankeadas (Orgânico)</CardTitle>
+                <CardDescription>Páginas que mais recebem cliques do Google</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {gsc?.topPages?.map((page: any, i: number) => (
+                    <div key={i} className="flex items-center justify-between border-b pb-2 last:border-0">
+                      <div className="flex items-center gap-2 overflow-hidden">
+                        <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                        <div className="flex flex-col overflow-hidden">
+                          <span className="text-sm font-medium truncate" title={page.keys[0]}>{page.keys[0]}</span>
+                          <span className="text-xs text-muted-foreground">Posição média: {page.position.toFixed(1)}</span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground whitespace-nowrap">
+                        <span>{page.impressions} imp.</span>
+                        <span className="font-medium text-foreground">{page.clicks} cliques</span>
                       </div>
                     </div>
                   ))}
