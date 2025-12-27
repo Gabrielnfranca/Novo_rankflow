@@ -7,6 +7,7 @@ import { ptBR } from "date-fns/locale";
 import { ArrowDown, ArrowUp, Globe, Calendar, MousePointerClick, Eye, Activity, CheckCircle2, Link as LinkIcon, Printer } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
+import { DashboardDateRangePicker } from "@/components/dashboard-date-range-picker";
 
 interface ReportViewProps {
   data: any;
@@ -36,7 +37,8 @@ export function ReportView({ data }: ReportViewProps) {
   return (
     <div className="max-w-[210mm] mx-auto bg-white min-h-screen p-8 md:p-12 print:p-0 print:max-w-none">
       {/* Print Button - Hidden when printing */}
-      <div className="mb-8 flex justify-end print:hidden">
+      <div className="mb-8 flex justify-end gap-4 print:hidden">
+        <DashboardDateRangePicker />
         <Button onClick={() => window.print()}>
           <Printer className="mr-2 h-4 w-4" />
           Imprimir / Salvar PDF
