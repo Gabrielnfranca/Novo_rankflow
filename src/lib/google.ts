@@ -110,6 +110,20 @@ export async function getSearchConsoleData(auth: any, siteUrl: string, startDate
   return res.data.rows || [];
 }
 
+export async function getSearchConsoleTopQueries(auth: any, siteUrl: string, startDate: string, endDate: string) {
+  const searchconsole = google.searchconsole({ version: 'v1', auth });
+  const res = await searchconsole.searchanalytics.query({
+    siteUrl,
+    requestBody: {
+      startDate,
+      endDate,
+      dimensions: ['query'],
+      rowLimit: 10,
+    },
+  });
+  return res.data.rows || [];
+}
+
 export async function getGA4Data(auth: any, propertyId: string, startDate: string, endDate: string) {
   const analyticsData = google.analyticsdata({ version: 'v1beta', auth });
   const res = await analyticsData.properties.runReport({
@@ -118,6 +132,22 @@ export async function getGA4Data(auth: any, propertyId: string, startDate: strin
       dateRanges: [{ startDate, endDate }],
       metrics: [{ name: 'activeUsers' }, { name: 'sessions' }, { name: 'screenPageViews' }],
       dimensions: [{ name: 'date' }],
+      orderBys: [{ dimension: { dimensionName: 'date' } }],
+    },
+  });
+  return res.data;
+}
+
+export async function getGA4TopPages(auth: any, propertyId: string, startDate: string, endDate: string) {
+  const analyticsData = google.analyticsdata({ version: 'v1beta', auth });
+  const res = await analyticsData.properties.runReport({
+    property: `properties/${propertyId}`,
+    requestBody: {
+      dateRanges: [{ startDate, endDate }],
+      metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
+      dimensions: [{ name: 'pagePath' }],
+      limit: 10,
+      orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
     },
   });
   return res.data;

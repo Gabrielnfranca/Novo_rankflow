@@ -7,11 +7,27 @@ import { Globe, MapPin, CheckCircle2, Clock, FileWarning, ArrowRight, TrendingUp
 import Link from "next/link"
 import { getClientReportStats } from "@/app/actions"
 import { ClientReportDialog } from "@/components/client-report-dialog"
+import { getGoogleDashboardData } from "@/app/actions/google-integration"
+import { ClientSeoDashboard } from "@/components/client-seo-dashboard"
+import { subDays, format } from "date-fns"
 
 export default async function ClientPage({ params }: { params: Promise<{ clientId: string }> }) {
   const { clientId } = await params
   
-  const [client, overdueBacklinks, pendingTasks, technicalAudit, reportData] = await Promise.all([
+  const endDate = format(new Date(), 'yyyy-MM-dd');
+  const startDate = format(subDays(new Date(), 28), 'yyyy-MM-dd');
+  const startDateObj = subDays(new Date(), 28);
+
+  const [
+    client, 
+    overdueBacklinks, 
+    pendingTasks, 
+    technicalAudit, 
+    reportData,
+    googleData,
+    recentBacklinks,
+    completedTasks
+  ] = await Promise.all([
     prisma.client.findUnique({
       where: { id: clientId },
       include: {
@@ -41,7 +57,21 @@ export default async function ClientPage({ params }: { params: Promise<{ clientI
     prisma.technicalAudit.findUnique({
       where: { clientId }
     }),
-    getClientReportStats(clientId)
+    getClientReportStats(clientId),
+    getGoogleDashboardData(clientId, startDate, endDate),
+    prisma.backlink.count({
+      where: {
+        clientId,
+        createdAt: { gte: startDateObj }
+      }
+    }),
+    prisma.contentTask.count({
+      where: {
+        clientId,
+        column: 'Done',
+        updatedAt: { gte: startDateObj }
+      }
+    })
   ])
 
   if (!client) {
@@ -132,6 +162,15 @@ export default async function ClientPage({ params }: { params: Promise<{ clientI
             )}
         </div>
       )}
+
+      {/* SEO & Performance Dashboard */}
+      <ClientSeoDashboard 
+        data={googleData} 
+        recentActivity={{
+          completedTasks,
+          createdBacklinks: recentBacklinks
+        }}
+      />
 
       {/* KPIs Principais */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">

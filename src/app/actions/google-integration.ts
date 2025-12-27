@@ -8,7 +8,9 @@ import {
   getSearchConsoleSites, 
   getGA4Properties,
   getSearchConsoleData,
-  getGA4Data
+  getGA4Data,
+  getSearchConsoleTopQueries,
+  getGA4TopPages
 } from '@/lib/google';
 import { revalidatePath } from 'next/cache';
 
@@ -79,6 +81,59 @@ export async function fetchGoogleProperties(clientId: string) {
   } catch (error: any) {
     console.error('Error fetching Google properties:', error);
     return { error: `Erro ao buscar propriedades: ${error.message}` };
+  }
+}
+
+export async function getGoogleDashboardData(clientId: string, startDate: string, endDate: string) {
+  try {
+    const client = await prisma.client.findUnique({
+      where: { id: clientId },
+      select: { gscUrl: true, ga4PropertyId: true }
+    });
+
+    if (!client) return { error: 'Client not found' };
+    
+    // If not connected, just return nulls without error to avoid breaking the UI
+    if (!client.gscUrl && !client.ga4PropertyId) {
+      return { gsc: null, ga4: null };
+    }
+
+    const auth = await getAuthenticatedClient(clientId);
+    
+    const results: any = {
+      gsc: null,
+      ga4: null
+    };
+
+    if (client.gscUrl) {
+      try {
+        const [performance, topQueries] = await Promise.all([
+          getSearchConsoleData(auth, client.gscUrl, startDate, endDate),
+          getSearchConsoleTopQueries(auth, client.gscUrl, startDate, endDate)
+        ]);
+        results.gsc = { performance, topQueries };
+      } catch (e) {
+        console.error('Error fetching GSC data', e);
+      }
+    }
+
+    if (client.ga4PropertyId) {
+      try {
+        const [traffic, topPages] = await Promise.all([
+          getGA4Data(auth, client.ga4PropertyId, startDate, endDate),
+          getGA4TopPages(auth, client.ga4PropertyId, startDate, endDate)
+        ]);
+        results.ga4 = { traffic, topPages };
+      } catch (e) {
+        console.error('Error fetching GA4 data', e);
+      }
+    }
+
+    return results;
+  } catch (error) {
+    console.error('Error fetching dashboard data:', error);
+    // Return nulls instead of throwing to allow the page to render other parts
+    return { gsc: null, ga4: null, error: 'Failed to fetch dashboard data' };
   }
 }
 
