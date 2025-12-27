@@ -2,6 +2,7 @@ import { getDashboardStats } from "@/app/actions"
 import { DashboardStats } from "@/components/dashboard-stats"
 import { RankDistributionChart } from "@/components/rank-distribution-chart"
 import { RecentActivity } from "@/components/recent-activity"
+import { ClientsOverview } from "@/components/clients-overview"
 
 export const dynamic = 'force-dynamic'
 
@@ -21,6 +22,7 @@ export default async function DashboardPage() {
 
       <div className="space-y-4">
           <DashboardStats stats={stats} />
+          <ClientsOverview clients={stats.clientsOverview} />
           <RecentActivity winners={stats.winners} losers={stats.losers} />
           <div className="grid gap-4 md:grid-cols-1 lg:grid-cols-7">
             <RankDistributionChart data={stats.distribution} />

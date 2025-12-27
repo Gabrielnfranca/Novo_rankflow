@@ -234,19 +234,32 @@ export async function getDashboardStats() {
             top100: 0,
             distribution: [],
             winners: [],
-            losers: []
+            losers: [],
+            clientsOverview: []
          }
     }
 
     const clientWhere: Prisma.ClientWhereInput = user?.role === 'ADMIN' ? {} : { userId: user?.id }
     const keywordWhere: Prisma.KeywordWhereInput = user?.role === 'ADMIN' ? {} : { client: { userId: user?.id } }
 
-    const [totalClients, totalKeywords, keywords] = await Promise.all([
+    const [totalClients, totalKeywords, keywords, clients] = await Promise.all([
       prisma.client.count({ where: clientWhere }),
       prisma.keyword.count({ where: keywordWhere }),
       prisma.keyword.findMany({
         where: keywordWhere,
         include: { client: true }
+      }),
+      prisma.client.findMany({
+        where: clientWhere,
+        include: {
+            keywords: {
+                select: {
+                    position: true,
+                    previousPosition: true
+                }
+            }
+        },
+        orderBy: { name: 'asc' }
       })
     ])
 
@@ -274,6 +287,27 @@ export async function getDashboardStats() {
       .sort((a, b) => (b.position - b.previousPosition) - (a.position - a.previousPosition))
       .slice(0, 5)
 
+    // Clients Overview
+    const clientsOverview = clients.map(client => {
+        const kws = client.keywords;
+        const cTop3 = kws.filter(k => k.position > 0 && k.position <= 3).length;
+        const cTop10 = kws.filter(k => k.position > 0 && k.position <= 10).length;
+        const improved = kws.filter(k => k.position > 0 && k.previousPosition > 0 && k.position < k.previousPosition).length;
+        const declined = kws.filter(k => k.position > 0 && k.previousPosition > 0 && k.position > k.previousPosition).length;
+        
+        return {
+            id: client.id,
+            name: client.name,
+            url: client.url,
+            status: client.status,
+            monthlyValue: client.monthlyValue,
+            totalKeywords: kws.length,
+            top3: cTop3,
+            top10: cTop10,
+            trend: improved - declined
+        }
+    })
+
     return {
       totalClients,
       totalKeywords,
@@ -282,7 +316,8 @@ export async function getDashboardStats() {
       top100,
       distribution,
       winners,
-      losers
+      losers,
+      clientsOverview
     }
   } catch (error) {
     console.error("Erro ao buscar estatísticas:", error)
@@ -294,7 +329,8 @@ export async function getDashboardStats() {
       top100: 0,
       distribution: [],
       winners: [],
-      losers: []
+      losers: [],
+      clientsOverview: []
     }
   }
 }
