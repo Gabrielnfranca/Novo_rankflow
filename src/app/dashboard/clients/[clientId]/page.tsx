@@ -131,7 +131,12 @@ export default async function ClientPage({
         </div>
         <div className="flex gap-2 items-center">
             <DashboardDateRangePicker />
-            <ClientReportDialog data={reportData} />
+            <Button variant="outline" asChild>
+                <Link href={`/dashboard/clients/${clientId}/report?from=${startDate}&to=${endDate}`} target="_blank">
+                  <FileText className="mr-2 h-4 w-4" />
+                  Gerar Relatório
+                </Link>
+            </Button>
             <Button variant="outline" asChild>
                 <Link href={`/dashboard/clients/${clientId}/settings`}>Editar Cliente</Link>
             </Button>
