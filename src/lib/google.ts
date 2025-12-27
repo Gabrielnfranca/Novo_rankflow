@@ -146,7 +146,7 @@ export async function getGA4TopPages(auth: any, propertyId: string, startDate: s
       dateRanges: [{ startDate, endDate }],
       metrics: [{ name: 'activeUsers' }, { name: 'screenPageViews' }],
       dimensions: [{ name: 'pagePath' }],
-      limit: 10,
+      limit: "10",
       orderBys: [{ metric: { metricName: 'activeUsers' }, desc: true }],
     },
   });
