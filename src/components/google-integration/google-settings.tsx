@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { initiateGoogleConnection, fetchGoogleProperties, saveGoogleSettings } from '@/app/actions/google-integration';
 import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { toast } from "sonner";
+import { useToast } from "@/hooks/use-toast";
 
 interface GoogleSettingsProps {
   clientId: string;
@@ -17,6 +17,7 @@ interface GoogleSettingsProps {
 }
 
 export function GoogleSettings({ clientId, isConnected, savedGscUrl, savedGa4PropertyId }: GoogleSettingsProps) {
+  const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [propertiesLoading, setPropertiesLoading] = useState(false);
   const [gscSites, setGscSites] = useState<any[]>([]);
@@ -35,7 +36,11 @@ export function GoogleSettings({ clientId, isConnected, savedGscUrl, savedGa4Pro
     setPropertiesLoading(true);
     const res = await fetchGoogleProperties(clientId);
     if (res.error) {
-      toast.error(res.error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao carregar propriedades",
+        description: res.error,
+      });
     } else {
       setGscSites(res.gscSites || []);
       setGa4Properties(res.ga4Properties || []);
@@ -49,7 +54,11 @@ export function GoogleSettings({ clientId, isConnected, savedGscUrl, savedGa4Pro
       const url = await initiateGoogleConnection(clientId);
       window.location.href = url;
     } catch (error) {
-      toast.error("Erro ao iniciar conexão");
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Erro ao iniciar conexão",
+      });
       setLoading(false);
     }
   };
@@ -58,9 +67,16 @@ export function GoogleSettings({ clientId, isConnected, savedGscUrl, savedGa4Pro
     setLoading(true);
     const res = await saveGoogleSettings(clientId, selectedGsc, selectedGa4);
     if (res.success) {
-      toast.success("Configurações salvas com sucesso!");
+      toast({
+        title: "Sucesso",
+        description: "Configurações salvas com sucesso!",
+      });
     } else {
-      toast.error(res.error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao salvar",
+        description: res.error,
+      });
     }
     setLoading(false);
   };
