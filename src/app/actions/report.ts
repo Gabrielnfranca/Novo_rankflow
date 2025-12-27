@@ -26,7 +26,7 @@ export async function getClientReportData(clientId: string, startDate: string, e
   ] = await Promise.all([
     prisma.client.findUnique({
       where: { id: clientId },
-      select: { name: true, url: true, logo: true } // Assuming logo might exist or we use name
+      select: { name: true, url: true }
     }),
     getGoogleDashboardData(clientId, startDate, endDate),
     getGoogleDashboardData(clientId, prevStartDateStr, prevEndDateStr),
@@ -34,12 +34,12 @@ export async function getClientReportData(clientId: string, startDate: string, e
       where: {
         clientId,
         column: 'Done',
-        updatedAt: {
+        createdAt: {
           gte: start,
           lte: end
         }
       },
-      orderBy: { updatedAt: 'desc' }
+      orderBy: { createdAt: 'desc' }
     }),
     prisma.backlink.findMany({
       where: {
