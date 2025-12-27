@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ArrowDown, ArrowUp, Globe, Calendar, MousePointerClick, Eye, Activity, CheckCircle2, Link as LinkIcon, Printer } from "lucide-react";
+import { ArrowDown, ArrowUp, Globe, Calendar, MousePointerClick, Eye, Activity, CheckCircle2, Link as LinkIcon, Printer, Search, FileText } from "lucide-react";
 import { Area, AreaChart, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { Button } from "@/components/ui/button";
 import { DashboardDateRangePicker } from "@/components/dashboard-date-range-picker";
@@ -165,33 +165,64 @@ export function ReportView({ data }: ReportViewProps) {
       )}
 
       {/* Two Columns: Keywords & Pages */}
-      <div className="grid grid-cols-2 gap-12 mb-12 break-inside-avoid">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-12 break-inside-avoid print:grid-cols-1 print:gap-8">
+        {/* Top Keywords */}
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-4 border-b pb-2">Top Palavras-Chave</h3>
-          <div className="space-y-3">
-            {topKeywords.slice(0, 8).map((kw: any, i: number) => (
-              <div key={i} className="flex justify-between items-center text-sm">
-                <span className="text-slate-700 font-medium truncate max-w-[200px]">{kw.keys[0]}</span>
-                <div className="flex gap-4 text-slate-500">
-                  <span>Pos: {kw.position.toFixed(1)}</span>
-                  <span className="font-semibold text-slate-900">{kw.clicks} clics</span>
-                </div>
-              </div>
-            ))}
+          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+            <span className="bg-blue-100 text-blue-700 p-1 rounded">
+               <Search className="h-4 w-4" />
+            </span>
+            Top Palavras-Chave
+          </h3>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 text-slate-500 font-medium border-b">
+                <tr>
+                  <th className="px-4 py-3">Palavra-chave</th>
+                  <th className="px-4 py-3 text-right">Pos.</th>
+                  <th className="px-4 py-3 text-right">Clics</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {topKeywords.slice(0, 10).map((kw: any, i: number) => (
+                  <tr key={i} className="hover:bg-slate-50/50">
+                    <td className="px-4 py-2 font-medium text-slate-700 truncate max-w-[180px] print:max-w-none">{kw.keys[0]}</td>
+                    <td className="px-4 py-2 text-right text-slate-500">{kw.position.toFixed(1)}</td>
+                    <td className="px-4 py-2 text-right text-slate-900 font-semibold">{kw.clicks}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
+        {/* Top Pages */}
         <div>
-          <h3 className="text-lg font-semibold text-slate-900 mb-4 border-b pb-2">Páginas Mais Acessadas</h3>
-          <div className="space-y-3">
-            {topPages.slice(0, 8).map((page: any, i: number) => (
-              <div key={i} className="flex justify-between items-center text-sm">
-                <span className="text-slate-700 font-medium truncate max-w-[200px]" title={page.dimensionValues[0].value}>
-                  {page.dimensionValues[0].value}
-                </span>
-                <span className="font-semibold text-slate-900">{page.metricValues[0].value} usuários</span>
-              </div>
-            ))}
+          <h3 className="text-lg font-semibold text-slate-900 mb-4 flex items-center gap-2">
+             <span className="bg-green-100 text-green-700 p-1 rounded">
+               <FileText className="h-4 w-4" />
+            </span>
+            Páginas Mais Acessadas
+          </h3>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-sm text-left">
+              <thead className="bg-slate-50 text-slate-500 font-medium border-b">
+                <tr>
+                  <th className="px-4 py-3">Página (URL)</th>
+                  <th className="px-4 py-3 text-right">Usuários</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {topPages.slice(0, 10).map((page: any, i: number) => (
+                  <tr key={i} className="hover:bg-slate-50/50">
+                    <td className="px-4 py-2 font-medium text-slate-700 truncate max-w-[180px] print:max-w-none" title={page.dimensionValues[0].value}>
+                      {page.dimensionValues[0].value}
+                    </td>
+                    <td className="px-4 py-2 text-right text-slate-900 font-semibold">{page.metricValues[0].value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>
