@@ -3,7 +3,7 @@ import { notFound } from "next/navigation"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Globe, MapPin, CheckCircle2, Clock, FileWarning, ArrowRight, TrendingUp, Link as LinkIcon, FileText } from "lucide-react"
+import { Globe, MapPin, CheckCircle2, Clock, FileWarning, ArrowRight, TrendingUp, Link as LinkIcon, FileText, ExternalLink } from "lucide-react"
 import Link from "next/link"
 import { getClientReportStats } from "@/app/actions"
 import { ClientReportDialog } from "@/components/client-report-dialog"
@@ -113,9 +113,10 @@ export default async function ClientPage({
           <h1 className="text-3xl font-bold tracking-tight">{client.name}</h1>
           <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
             {client.url && (
-              <a href={client.url} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-primary transition-colors">
+              <a href={client.url} target="_blank" rel="noreferrer" className="flex items-center gap-1 hover:text-primary transition-colors group">
                 <Globe className="h-4 w-4" />
-                {client.url}
+                <span className="underline decoration-transparent group-hover:decoration-primary transition-all">{client.url}</span>
+                <ExternalLink className="h-3 w-3 opacity-50 group-hover:opacity-100 transition-opacity" />
               </a>
             )}
             {client.address && (

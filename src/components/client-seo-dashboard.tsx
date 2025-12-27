@@ -3,7 +3,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
-import { ArrowDown, ArrowUp, MousePointerClick, Eye, Users, Activity, Search, FileText } from "lucide-react";
+import { ArrowDown, ArrowUp, MousePointerClick, Eye, Users, Activity, Search, FileText, ExternalLink } from "lucide-react";
 
 interface ClientSeoDashboardProps {
   data: {
@@ -230,7 +230,10 @@ export function ClientSeoDashboard({ data, recentActivity }: ClientSeoDashboardP
                       <div className="flex items-center gap-2 overflow-hidden">
                         <FileText className="h-4 w-4 text-muted-foreground flex-shrink-0" />
                         <div className="flex flex-col overflow-hidden">
-                          <span className="text-sm font-medium truncate" title={page.keys[0]}>{page.keys[0]}</span>
+                          <a href={page.keys[0]} target="_blank" rel="noreferrer" className="text-sm font-medium truncate hover:underline flex items-center gap-1 group" title={page.keys[0]}>
+                            {page.keys[0]}
+                            <ExternalLink className="h-3 w-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+                          </a>
                           <span className="text-xs text-muted-foreground">Posição média: {page.position.toFixed(1)}</span>
                         </div>
                       </div>
