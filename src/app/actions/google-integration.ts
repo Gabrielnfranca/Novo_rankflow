@@ -64,9 +64,9 @@ export async function fetchGoogleProperties(clientId: string) {
     );
 
     return { gscSites, ga4Properties };
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching Google properties:', error);
-    return { error: 'Failed to fetch properties' };
+    return { error: `Erro ao buscar propriedades: ${error.message}` };
   }
 }
 
