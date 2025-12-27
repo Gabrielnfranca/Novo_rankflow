@@ -49,10 +49,22 @@ export async function fetchGoogleProperties(clientId: string) {
   try {
     const auth = await getAuthenticatedClient(clientId);
     
-    const [gscSites, ga4Accounts] = await Promise.all([
-      getSearchConsoleSites(auth),
-      getGA4Properties(auth)
-    ]);
+    let gscSites: any[] = [];
+    let ga4Accounts: any[] = [];
+
+    // Busca Search Console de forma independente
+    try {
+      gscSites = await getSearchConsoleSites(auth);
+    } catch (error) {
+      console.error('Erro ao buscar sites do Search Console:', error);
+    }
+
+    // Busca Analytics de forma independente
+    try {
+      ga4Accounts = await getGA4Properties(auth);
+    } catch (error) {
+      console.error('Erro ao buscar contas do Analytics:', error);
+    }
 
     // Flatten GA4 properties
     const ga4Properties = ga4Accounts.flatMap(account => 
