@@ -186,7 +186,7 @@ export function ReportView({ data }: ReportViewProps) {
               <tbody className="divide-y divide-slate-100">
                 {topKeywords.slice(0, 10).map((kw: any, i: number) => (
                   <tr key={i} className="hover:bg-slate-50/50">
-                    <td className="px-4 py-2 font-medium text-slate-700 truncate max-w-[180px] print:max-w-none">{kw.keys[0]}</td>
+                    <td className="px-4 py-2 font-medium text-slate-700 break-words">{kw.keys[0]}</td>
                     <td className="px-4 py-2 text-right text-slate-500">{kw.position.toFixed(1)}</td>
                     <td className="px-4 py-2 text-right text-slate-900 font-semibold">{kw.clicks}</td>
                   </tr>
@@ -215,7 +215,7 @@ export function ReportView({ data }: ReportViewProps) {
               <tbody className="divide-y divide-slate-100">
                 {topPages.slice(0, 10).map((page: any, i: number) => (
                   <tr key={i} className="hover:bg-slate-50/50">
-                    <td className="px-4 py-2 font-medium text-slate-700 truncate max-w-[180px] print:max-w-none" title={page.dimensionValues[0].value}>
+                    <td className="px-4 py-2 font-medium text-slate-700 break-all" title={page.dimensionValues[0].value}>
                       {page.dimensionValues[0].value}
                     </td>
                     <td className="px-4 py-2 text-right text-slate-900 font-semibold">{page.metricValues[0].value}</td>
