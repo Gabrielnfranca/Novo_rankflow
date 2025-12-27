@@ -34,6 +34,58 @@ export function ReportView({ data }: ReportViewProps) {
     );
   };
 
+  // Generate Dynamic Insights
+  const generateExecutiveSummary = () => {
+    const sessionGrowth = metrics.sessions.growth;
+    const clickGrowth = metrics.clicks.growth;
+    const impressionGrowth = metrics.impressions.growth;
+    
+    let trafficText = "";
+    if (sessionGrowth > 5) {
+      trafficText = `Tivemos um excelente desempenho em tráfego, com um aumento de ${sessionGrowth.toFixed(1)}% nas sessões.`;
+    } else if (sessionGrowth > 0) {
+      trafficText = `O tráfego manteve-se estável com um leve crescimento de ${sessionGrowth.toFixed(1)}%.`;
+    } else {
+      trafficText = `Observamos uma retração de ${Math.abs(sessionGrowth).toFixed(1)}% no tráfego, o que indica a necessidade de reforçar as estratégias de aquisição.`;
+    }
+
+    let visibilityText = "";
+    if (clickGrowth > 0 && impressionGrowth > 0) {
+      visibilityText = `A visibilidade orgânica também cresceu, com ${clickGrowth.toFixed(1)}% mais cliques e ${impressionGrowth.toFixed(1)}% mais impressões no Google.`;
+    } else if (clickGrowth < 0 && impressionGrowth > 0) {
+      visibilityText = `Apesar do aumento nas impressões (+${impressionGrowth.toFixed(1)}%), tivemos menos cliques, sugerindo oportunidades de melhoria nos títulos e descrições (CTR).`;
+    } else {
+      visibilityText = `Houve uma variação de ${clickGrowth.toFixed(1)}% nos cliques orgânicos em comparação ao período anterior.`;
+    }
+
+    return `${trafficText} ${visibilityText} Continuamos monitorando as principais palavras-chave para garantir a evolução constante do projeto.`;
+  };
+
+  const generateKeywordAnalysis = () => {
+    if (!trackedKeywords || trackedKeywords.length === 0) return null;
+    
+    const improved = trackedKeywords.filter((k: any) => k.previousPosition > 0 && k.position < k.previousPosition).length;
+    const declined = trackedKeywords.filter((k: any) => k.previousPosition > 0 && k.position > k.previousPosition).length;
+    const stable = trackedKeywords.filter((k: any) => k.previousPosition > 0 && k.position === k.previousPosition).length;
+    const newRankings = trackedKeywords.filter((k: any) => k.previousPosition === 0 && k.position > 0).length;
+
+    return (
+      <div className="mt-4 p-4 bg-blue-50 rounded-lg text-sm text-blue-800 border border-blue-100">
+        <p className="font-semibold mb-1 flex items-center gap-2">
+          <Activity className="h-4 w-4" />
+          Análise de Movimentação
+        </p>
+        <p>
+          Neste período, monitoramos {trackedKeywords.length} palavras-chave estratégicas. 
+          {improved > 0 && ` ${improved} subiram de posição,`}
+          {declined > 0 && ` ${declined} sofreram queda,`}
+          {stable > 0 && ` ${stable} mantiveram a posição`}
+          {newRankings > 0 && ` e ${newRankings} entraram no ranking pela primeira vez`}.
+        </p>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-[210mm] mx-auto bg-white min-h-screen p-8 md:p-12 print:p-0 print:max-w-none print:min-h-0 print:w-full">
       {/* Print Button - Hidden when printing */}
@@ -64,14 +116,11 @@ export function ReportView({ data }: ReportViewProps) {
         </div>
       </div>
 
-      {/* Executive Summary Placeholder */}
+      {/* Executive Summary */}
       <div className="mb-12 p-6 bg-slate-50 rounded-lg border border-slate-100 print:mb-6">
         <h3 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">Resumo Executivo</h3>
         <p className="text-slate-600 leading-relaxed">
-          Neste período, focamos em expandir a autoridade do domínio através de backlinks estratégicos e otimização de conteúdo.
-          Observamos um crescimento de <span className="font-semibold">{metrics.clicks.growth.toFixed(1)}%</span> nos cliques orgânicos
-          e <span className="font-semibold">{metrics.sessions.growth.toFixed(1)}%</span> nas sessões do site.
-          As principais palavras-chave alvo apresentaram melhora no posicionamento médio.
+          {generateExecutiveSummary()}
         </p>
       </div>
 
@@ -194,6 +243,7 @@ export function ReportView({ data }: ReportViewProps) {
               </tbody>
             </table>
           </div>
+          {generateKeywordAnalysis()}
         </div>
 
         {/* Top Pages */}
