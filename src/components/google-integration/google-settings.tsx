@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
-import { initiateGoogleConnection, fetchGoogleProperties, saveGoogleSettings } from '@/app/actions/google-integration';
-import { Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
+import { initiateGoogleConnection, fetchGoogleProperties, saveGoogleSettings, disconnectGoogleAccount } from '@/app/actions/google-integration';
+import { Loader2, CheckCircle2, AlertCircle, Trash2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 
 interface GoogleSettingsProps {
@@ -81,6 +81,31 @@ export function GoogleSettings({ clientId, isConnected, savedGscUrl, savedGa4Pro
     setLoading(false);
   };
 
+  const handleDisconnect = async () => {
+    if (!confirm("Tem certeza que deseja desconectar a conta Google? Os dados deixarão de ser atualizados.")) return;
+    
+    setLoading(true);
+    const res = await disconnectGoogleAccount(clientId);
+    if (res.success) {
+      toast({
+        title: "Desconectado",
+        description: "Conta Google desconectada com sucesso.",
+      });
+      // Reset local state
+      setGscSites([]);
+      setGa4Properties([]);
+      setSelectedGsc('');
+      setSelectedGa4('');
+    } else {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: res.error,
+      });
+    }
+    setLoading(false);
+  };
+
   return (
     <Card>
       <CardHeader>
@@ -103,9 +128,15 @@ export function GoogleSettings({ clientId, isConnected, savedGscUrl, savedGa4Pro
             <div className="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-md border border-green-200">
               <CheckCircle2 className="h-5 w-5" />
               <span className="font-medium">Conta Google Conectada</span>
-              <Button variant="ghost" size="sm" className="ml-auto text-xs" onClick={handleConnect}>
-                Reconectar
-              </Button>
+              <div className="ml-auto flex gap-2">
+                <Button variant="ghost" size="sm" className="text-xs" onClick={handleConnect}>
+                  Reconectar
+                </Button>
+                <Button variant="ghost" size="sm" className="text-xs text-red-600 hover:text-red-700 hover:bg-red-50" onClick={handleDisconnect}>
+                  <Trash2 className="h-4 w-4 mr-1" />
+                  Desconectar
+                </Button>
+              </div>
             </div>
 
             {propertiesLoading ? (

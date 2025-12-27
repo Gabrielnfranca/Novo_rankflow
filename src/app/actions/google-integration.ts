@@ -156,6 +156,27 @@ export async function saveGoogleSettings(clientId: string, gscUrl: string, ga4Pr
   }
 }
 
+export async function disconnectGoogleAccount(clientId: string) {
+  try {
+    await prisma.client.update({
+      where: { id: clientId },
+      data: {
+        googleRefreshToken: null,
+        googleAccessToken: null,
+        googleTokenExpiry: null,
+        gscUrl: null,
+        ga4PropertyId: null,
+      },
+    });
+    revalidatePath(`/dashboard/clients/${clientId}`);
+    revalidatePath(`/dashboard/clients/${clientId}/settings`);
+    return { success: true };
+  } catch (error) {
+    console.error('Error disconnecting Google account:', error);
+    return { success: false, error: 'Failed to disconnect account' };
+  }
+}
+
 export async function fetchGoogleReport(clientId: string, startDate: string, endDate: string) {
   try {
     const client = await prisma.client.findUnique({
